@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:paddingLeft="15dp"
+    android:layout_height="wrap_content"
+    android:background="#fff"
+    android:paddingBottom="15dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/subject_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="硬件课程设计"
+        android:textColor="#000"
+        android:textSize="26sp" />
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_marginRight="15dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/didian" />
+
+        <TextView
+            android:textSize="16sp"
+            android:layout_marginRight="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="教室" />
+
+        <TextView
+            android:id="@+id/subject_room"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="计-37机房" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_marginRight="15dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/didian" />
+
+        <TextView
+            android:textSize="16sp"
+            android:layout_marginRight="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="周数" />
+
+        <TextView
+            android:id="@+id/subject_week"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10-15周" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_marginRight="15dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/didian" />
+
+        <TextView
+            android:textSize="16sp"
+            android:layout_marginRight="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="节数" />
+
+        <TextView
+            android:id="@+id/subject_day"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="周一 5-8节" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_marginRight="15dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/didian" />
+
+        <TextView
+            android:textSize="16sp"
+            android:layout_marginRight="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="老师" />
+
+        <TextView
+            android:id="@+id/subject_teacher"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="王凯" />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

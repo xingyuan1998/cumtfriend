@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.flyingstudio.cumtfriend.R;
+import com.flyingstudio.cumtfriend.adapter.SubjectDetailAdapter;
 import com.flyingstudio.cumtfriend.entity.Subject;
 import com.flyingstudio.cumtfriend.entity.SubjectData;
 import com.flyingstudio.cumtfriend.net.Constant;
@@ -28,6 +30,8 @@ import com.flyingstudio.cumtfriend.net.LoginTask;
 import com.flyingstudio.cumtfriend.net.ScheduleTask;
 import com.flyingstudio.cumtfriend.utils.SPUtil;
 import com.flyingstudio.cumtfriend.view.LoginActivity;
+import com.flyingstudio.cumtfriend.view.SubjectDetailActivity;
+import com.google.gson.Gson;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.cache.model.CacheMode;
 import com.zhouyou.http.callback.SimpleCallBack;
@@ -381,6 +385,11 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
                     public void onItemClick(View v, List<Schedule> scheduleList) {
                         Log.d("TIME TABLE CLICK", "onItemClick: " + scheduleList.size());
                         System.out.print("onItemClick" + scheduleList);
+                        Gson gson = new Gson();
+
+                        Intent intent = new Intent(getContext(), SubjectDetailActivity.class);
+                        intent.putExtra("subjects", gson.toJson(scheduleList));
+                        getContext().startActivity(intent);
                     }
                 })
                 .callback(new ISchedule.OnItemLongClickListener() {
