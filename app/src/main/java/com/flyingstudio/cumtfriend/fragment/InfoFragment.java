@@ -24,6 +24,8 @@ import com.flyingstudio.cumtfriend.entity.ExamData;
 import com.flyingstudio.cumtfriend.entity.Record;
 import com.flyingstudio.cumtfriend.entity.RecordData;
 import com.flyingstudio.cumtfriend.net.Constant;
+import com.flyingstudio.cumtfriend.net.ExamTask;
+import com.flyingstudio.cumtfriend.net.LoginTask;
 import com.flyingstudio.cumtfriend.utils.ACache;
 import com.flyingstudio.cumtfriend.utils.SPUtil;
 import com.flyingstudio.cumtfriend.view.LoginActivity;
@@ -104,34 +106,63 @@ public class InfoFragment extends Fragment {
     }
 
     private void getData() {
-        String exam_is_validate = cache.getAsString("exam");
-        String record_is_validate = cache.getAsString("record");
-        if (!TextUtils.isEmpty(exam_is_validate)) {
-            exams = LitePal.findAll(Exam.class);
-            if (exams.size() != 0) examBlank.setVisibility(View.GONE);
-            if (exams != null) {
-                if (examAdapter == null) {
-                    examAdapter = new ExamRecAdapter(exams, getContext());
-                    examRecyclerView.setAdapter(examAdapter);
-                } else {
-                    examAdapter.notifyDataSetChanged();
-                }
-            }
-        } else {
-            getExamFormInternet();
+        String good = cache.getAsString("good");
+        String stuNum = SPUtil.getValue(getContext(), "username");
+        String password = SPUtil.getValue(getContext(), "password");
+        if (TextUtils.isEmpty(good)) {
+            new LoginTask(getContext(), stuNum, password).execute();
         }
 
-        if (!TextUtils.isEmpty(record_is_validate)) {
-            records = LitePal.findAll(Record.class);
-            if (records.size() != 0)
-                recordBlank.setVisibility(View.GONE);
-            if (recordRecAdapter == null) {
-                recordRecAdapter = new RecordRecAdapter(records, getContext());
-                recordRecyclerView.setAdapter(recordRecAdapter);
+        exams = LitePal.findAll(Exam.class);
+        if (exams.size() != 0) examBlank.setVisibility(View.GONE);
+        if (exams != null) {
+            if (examAdapter == null) {
+                examAdapter = new ExamRecAdapter(exams, getContext());
+                examRecyclerView.setAdapter(examAdapter);
             } else {
-                recordRecAdapter.notifyDataSetChanged();
+                examAdapter.notifyDataSetChanged();
             }
-        } else getRecordFormInternet();
+        }
+
+        records = LitePal.findAll(Record.class);
+        if (records.size() != 0)
+            recordBlank.setVisibility(View.GONE);
+        if (recordRecAdapter == null) {
+            recordRecAdapter = new RecordRecAdapter(records, getContext());
+            recordRecyclerView.setAdapter(recordRecAdapter);
+        } else {
+            recordRecAdapter.notifyDataSetChanged();
+        }
+
+
+//        String exam_is_validate = cache.getAsString("exam");
+//        String record_is_validate = cache.getAsString("record");
+//        if (!TextUtils.isEmpty(exam_is_validate)) {
+//            exams = LitePal.findAll(Exam.class);
+//            if (exams.size() != 0) examBlank.setVisibility(View.GONE);
+//            if (exams != null) {
+//                if (examAdapter == null) {
+//                    examAdapter = new ExamRecAdapter(exams, getContext());
+//                    examRecyclerView.setAdapter(examAdapter);
+//                } else {
+//                    examAdapter.notifyDataSetChanged();
+//                }
+//            }
+//        } else {
+//            getExamFormInternet();
+//        }
+//
+//        if (!TextUtils.isEmpty(record_is_validate)) {
+//            records = LitePal.findAll(Record.class);
+//            if (records.size() != 0)
+//                recordBlank.setVisibility(View.GONE);
+//            if (recordRecAdapter == null) {
+//                recordRecAdapter = new RecordRecAdapter(records, getContext());
+//                recordRecyclerView.setAdapter(recordRecAdapter);
+//            } else {
+//                recordRecAdapter.notifyDataSetChanged();
+//            }
+//        } else getRecordFormInternet();
     }
 
     private void getRecordFormInternet() {
@@ -200,7 +231,7 @@ public class InfoFragment extends Fragment {
                             }
                             cache.put("exam", "true", 24 * 60 * 60);
                             LitePal.deleteAll(Exam.class);
-                            for (Exam exam:exams) {
+                            for (Exam exam : exams) {
                                 exam.save();
                             }
                         }

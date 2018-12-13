@@ -24,6 +24,8 @@ import com.flyingstudio.cumtfriend.R;
 import com.flyingstudio.cumtfriend.entity.Subject;
 import com.flyingstudio.cumtfriend.entity.SubjectData;
 import com.flyingstudio.cumtfriend.net.Constant;
+import com.flyingstudio.cumtfriend.net.LoginTask;
+import com.flyingstudio.cumtfriend.net.ScheduleTask;
 import com.flyingstudio.cumtfriend.utils.SPUtil;
 import com.flyingstudio.cumtfriend.view.LoginActivity;
 import com.zhouyou.http.EasyHttp;
@@ -111,14 +113,15 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
         // 从数据库中取数据
 
         List<Subject> subjects = LitePal.findAll(Subject.class);
-        if (subjects.size() == 0) {
-            getFromInternetTimeTable();
-        } else {
-            mySubjects = subjects;
-            initTimetableView();
-            Log.d("GET DATABASE DATA", "initView: " + subjects.size());
-        }
-
+//        if (subjects.size() == 0) {
+//            getFromInternetTimeTable();
+//        } else {
+//            mySubjects = subjects;
+//            initTimetableView();
+//            Log.d("GET DATABASE DATA", "initView: " + subjects.size());
+//        }
+        mySubjects = subjects;
+        initTimetableView();
 
         moreButton = getView().findViewById(R.id.id_more);
         moreButton.setOnClickListener(new View.OnClickListener() {
@@ -234,8 +237,39 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
                         break;
 
                     case R.id.reimport_timetable:
-                        getFromInternetTimeTable();
-                        Toast.makeText(getContext(), "重新导入课表成功", Toast.LENGTH_LONG).show();
+//                        getFromInternetTimeTable();
+                        // TODO 这里需要做重新导入课表 现在  还不知道怎么弄
+//                        new ScheduleTask(getContext(), )
+
+                        String stuNum = SPUtil.getValue(getContext(), "username");
+                        String password = SPUtil.getValue(getContext(), "password");
+                        Log.d("REIMPORT TIMETABLE", "onMenuItemClick: " + stuNum + password);
+                        new LoginTask(getContext(), stuNum, password, new LoginTask.LoginCall() {
+                            @Override
+                            public void success(String cookie) {
+                                Log.d("LOGIN SUCCESS", "success: " + cookie);
+                                new ScheduleTask(getContext(), cookie, new ScheduleTask.ScheduleTaskFinish() {
+                                    @Override
+                                    public void finish() {
+                                        Log.d("REIMPORT Schedule", "finish: ");
+                                        Toast.makeText(getContext(), "重新导入课表成功", Toast.LENGTH_LONG).show();
+                                        mTimetableView.updateDateView();
+                                    }
+
+                                    @Override
+                                    public void fail() {
+                                        Toast.makeText(getContext(), "重新导入课表失败", Toast.LENGTH_LONG).show();
+                                    }
+                                }).execute("");
+                            }
+
+                            @Override
+                            public void fail() {
+                                Log.d("LOGIN SUCCESS", "err: " );
+                            }
+                        }).execute("");
+                        break;
+
                     default:
                         break;
                 }
@@ -345,7 +379,8 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
                 .callback(new ISchedule.OnItemClickListener() {
                     @Override
                     public void onItemClick(View v, List<Schedule> scheduleList) {
-
+                        Log.d("TIME TABLE CLICK", "onItemClick: " + scheduleList.size());
+                        System.out.print("onItemClick" + scheduleList);
                     }
                 })
                 .callback(new ISchedule.OnItemLongClickListener() {

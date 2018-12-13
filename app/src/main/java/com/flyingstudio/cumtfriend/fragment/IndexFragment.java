@@ -77,42 +77,39 @@ public class IndexFragment extends Fragment {
         activity.setSupportActionBar(toolbar);
         activity.setTitle("快速导航");
 
-        String token = SPUtil.getValue(getContext(), "token");
-        if (TextUtils.isEmpty(token)) Log.d("TOKEN NONE", "initView: ");
-        else {
-            indexRecyclerView = getView().findViewById(R.id.index_rec);
-            indexRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 5, GridLayoutManager.VERTICAL, false));
-            EasyHttp.get(Constant.GET_INDEX)
-                    .baseUrl(Constant.BASE_URL)
-                    .headers("token", token)
-                    .cacheTime(24 * 60 * 60 * 1000)
-                    .cacheKey("index_item")
-                    .cacheMode(CacheMode.CACHEANDREMOTE)
-                    .execute(new SimpleCallBack<List<Index>>() {
-                        @Override
-                        public void onError(ApiException e) {
-                            Log.e("GET_INDEX", "onError: " + e.getMessage());
-                            Log.d("GET_INDEX", "onError: " + e.getCode());
+        indexRecyclerView = getView().findViewById(R.id.index_rec);
+        indexRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 5, GridLayoutManager.VERTICAL, false));
+        EasyHttp.get(Constant.GET_INDEX)
+                .baseUrl(Constant.BASE_URL)
+//                    .headers("token", token)
+                .cacheTime(24 * 60 * 60 * 1000)
+                .cacheKey("index_item")
+                .cacheMode(CacheMode.CACHEANDREMOTE)
+                .execute(new SimpleCallBack<List<Index>>() {
+                    @Override
+                    public void onError(ApiException e) {
+                        Log.e("GET_INDEX", "onError: " + e.getMessage());
+                        Log.d("GET_INDEX", "onError: " + e.getCode());
 //                        if (e.getCode() == 4000){
 //                            Intent intent = new Intent(getContext(), LoginActivity.class);
 //                            startActivity(intent);
 //                        }
-                        }
+                    }
 
-                        @Override
-                        public void onSuccess(List<Index> indices) {
-                            Log.e("GET_INDEX", "onSuccess: " + indices.size());
-                            if (indices != null) {
-                                if (indexRecAdapter == null) {
-                                    indexRecAdapter = new IndexRecAdapter(indices, getContext());
-                                    indexRecyclerView.setAdapter(indexRecAdapter);
-                                } else {
-                                    indexRecAdapter.notifyDataSetChanged();
-                                }
+                    @Override
+                    public void onSuccess(List<Index> indices) {
+                        Log.e("GET_INDEX", "onSuccess: " + indices.size());
+                        if (indices != null) {
+                            if (indexRecAdapter == null) {
+                                indexRecAdapter = new IndexRecAdapter(indices, getContext());
+                                indexRecyclerView.setAdapter(indexRecAdapter);
+                            } else {
+                                indexRecAdapter.notifyDataSetChanged();
                             }
                         }
-                    });
-        }
+                    }
+                });
+
 
     }
 

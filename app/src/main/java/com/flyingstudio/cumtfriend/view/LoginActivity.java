@@ -20,28 +20,28 @@ import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText username, password;
-    @SuppressLint("HandlerLeak")
-    private Handler uiHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                // 成功
-                case 1:
-                    System.out.println("handleMessage thread id " + Thread.currentThread().getId());
-                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_LONG).show();
-                    System.out.println(msg.obj);
-                    Map<String, String> cookies = (HashMap<String, String>) msg.obj;
-                    Log.d("COOKIES", "handleMessage: " + cookies.get("JSESSIONID"));
-                    // 保存cookies cookies 目前就一个数值emmm 后面取 感觉需要搞个失效时间 emmm 到时候cookie失效了就不好弄了 感觉可以封装一下
-                    SPUtil.setValue(LoginActivity.this, "JSESSIONID", cookies.get("JSESSIONID"));
-                    break;
-                // 失败
-                case 2:
-                    Toast.makeText(LoginActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
-                    break;
-            }
-        }
-    };
+//    @SuppressLint("HandlerLeak")
+//    private Handler uiHandler = new Handler() {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            switch (msg.what) {
+//                // 成功
+//                case 1:
+//                    System.out.println("handleMessage thread id " + Thread.currentThread().getId());
+//                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_LONG).show();
+//                    System.out.println(msg.obj);
+//                    Map<String, String> cookies = (HashMap<String, String>) msg.obj;
+//                    Log.d("COOKIES", "handleMessage: " + cookies.get("JSESSIONID"));
+//                    // 保存cookies cookies 目前就一个数值emmm 后面取 感觉需要搞个失效时间 emmm 到时候cookie失效了就不好弄了 感觉可以封装一下
+//                    SPUtil.setValue(LoginActivity.this, "JSESSIONID", cookies.get("JSESSIONID"));
+//                    break;
+//                // 失败
+//                case 2:
+//                    Toast.makeText(LoginActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
+//                    break;
+//            }
+//        }
+//    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

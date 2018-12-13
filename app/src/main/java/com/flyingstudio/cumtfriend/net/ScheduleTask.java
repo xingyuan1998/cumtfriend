@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.litepal.LitePal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,17 +27,19 @@ public class ScheduleTask extends AsyncTask<String, Void, String> {
 
     private Connection connection;
     private Connection.Response response;
+    private ScheduleTaskFinish finish;
 
-
-    public ScheduleTask(Context context, String cookie){
+    public ScheduleTask(Context context, String cookie, ScheduleTaskFinish finish){
         this.context = context;
         this.cookies.put("JSESSIONID", cookie);
+        this.finish = finish;
     }
 
     @Override
     protected String doInBackground(String... strings) {
         try {
             getStudentTimetable(2018, 1);
+//            this.finish.finish();
             return "ok";
         } catch (Exception e) {
             e.printStackTrace();
@@ -49,8 +52,10 @@ public class ScheduleTask extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
         if (s.equals("ok")) {
+            this.finish.finish();
             Log.d("OK", "onPostExecute: ");
         } else {
+            this.finish.fail();
             Log.d("ERR", "onPostExecute: ");
         }
     }
@@ -68,6 +73,7 @@ public class ScheduleTask extends AsyncTask<String, Void, String> {
         }
         JSONArray timeTable = new JSONArray(jsonObject.getString("kbList"));
         System.out.println(String.valueOf(year) + " -- " + String.valueOf(year + 1) + "学年 " + "第" + term + "学期");
+        LitePal.deleteAll(Subject.class);
         for (int i = 0; i < timeTable.length(); i++) {
             JSONObject object = (JSONObject) timeTable.get(i);
             Subject subject = new Subject();
@@ -80,7 +86,7 @@ public class ScheduleTask extends AsyncTask<String, Void, String> {
             //
             String[] startEnd = object.getString("jcor").split("-");
             subject.setStart(Integer.parseInt(startEnd[0]));
-            subject.setStep(Integer.parseInt(startEnd[1]));
+            subject.setStep(Integer.parseInt(startEnd[1]) - Integer.parseInt(startEnd[0]) + 1);
 
             // 处理时间相关的 这里很蛋疼 很容易出问题emmm
             List<Integer> week_list = new ArrayList<>();
@@ -118,5 +124,10 @@ public class ScheduleTask extends AsyncTask<String, Void, String> {
             Log.d("GET TIMETABLE ", "getStudentTimetable: " + i);
 
         }
+    }
+
+    public interface ScheduleTaskFinish{
+        void finish();
+        void fail();
     }
 }

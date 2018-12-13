@@ -1,11 +1,14 @@
 package com.flyingstudio.cumtfriend.net;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.flyingstudio.cumtfriend.MainActivity;
+import com.flyingstudio.cumtfriend.utils.ACache;
 import com.flyingstudio.cumtfriend.utils.B64;
 import com.flyingstudio.cumtfriend.utils.RSAEncoder;
 import com.flyingstudio.cumtfriend.utils.SPUtil;
@@ -33,11 +36,19 @@ public class LoginTask extends AsyncTask<String, Void, String> {
     private Connection.Response response;
     private Document document;
     private String pwdForward;
+    private LoginCall loginCall;
 
     public LoginTask(Context context, String stuNum, String password) {
         this.context = context;
         this.stuNum = stuNum;
         this.pwdForward = password;
+    }
+
+    public LoginTask(Context context, String stuNum, String password, LoginCall call) {
+        this.context = context;
+        this.stuNum = stuNum;
+        this.pwdForward = password;
+        this.loginCall = call;
     }
 
     @Override
@@ -109,18 +120,89 @@ public class LoginTask extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        // 登录失败 返回为 null
+        // 登录失败 返回为 null 否则传回来是 cookie的一个键值 只有一个键
         Log.d("LOGIN", "onPostExecute: " + s);
         if (TextUtils.isEmpty(s)) {
             Toast.makeText(context, "登录失败", Toast.LENGTH_LONG).show();
-
+            if (loginCall != null) loginCall.fail();
         } else {
-            Toast.makeText(context, "登录成功", Toast.LENGTH_LONG).show();
-            SPUtil.setValue(context, "JSESSIONID", s);
-            SPUtil.setValue(context, "username", stuNum);
-            SPUtil.setValue(context, "password", pwdForward);
-            Log.d("GET TIMETABLE", "onPostExecute: ");
-            new ScheduleTask(context, s).execute("");
+            if (loginCall != null) {loginCall.success(s);return;}
+
+            String user = SPUtil.getValue(context, "username");
+            // 说明是第一次emmm
+            if (TextUtils.isEmpty(user)) {
+                Toast.makeText(context, "登录成功", Toast.LENGTH_LONG).show();
+                SPUtil.setValue(context, "username", stuNum);
+                SPUtil.setValue(context, "password", pwdForward);
+                SPUtil.setValue(context, "JSESSIONID", s);
+                Log.d("GET TIMETABLE", "onPostExecute: ");
+                new ScheduleTask(context, s, new ScheduleTask.ScheduleTaskFinish() {
+                    @Override
+                    public void finish() {
+                        new ExamTask(context, s, stuNum, 2018, 1, new ExamTask.ExamTaskFinish() {
+                            @Override
+                            public void finish() {
+                                new GradeTask(context, s, stuNum, 2018, 1, new GradeTask.GradeTaskFinish() {
+                                    @Override
+                                    public void finish() {
+
+                                        ACache cache = ACache.get(context);
+                                        cache.put("good", "nice", 24 * 60 * 60);
+                                        Intent intent = new Intent(context, MainActivity.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        context.startActivity(intent);
+                                    }
+
+                                    @Override
+                                    public void fail() {
+
+                                    }
+                                }).execute("");
+                            }
+
+                            @Override
+                            public void fail() {
+
+                            }
+                        }).execute("");
+                    }
+
+                    @Override
+                    public void fail() {
+                    }
+                }).execute("");
+            } else {
+                new ExamTask(context, s, stuNum, 2018, 1, new ExamTask.ExamTaskFinish() {
+                    @Override
+                    public void finish() {
+                        new GradeTask(context, s, stuNum, 2018, 1, new GradeTask.GradeTaskFinish() {
+                            @Override
+                            public void finish() {
+                                ACache cache = ACache.get(context);
+                                cache.put("good", "nice", 24 * 60 * 60);
+                            }
+
+                            @Override
+                            public void fail() {
+
+                            }
+                        }).execute("");
+                    }
+
+                    @Override
+                    public void fail() {
+                    }
+                }).execute("");
+            }
+
+
         }
+    }
+
+
+    public interface LoginCall {
+        void success(String s);
+
+        void fail();
     }
 }
