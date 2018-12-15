@@ -30,6 +30,7 @@ import com.flyingstudio.cumtfriend.net.LoginTask;
 import com.flyingstudio.cumtfriend.net.ScheduleTask;
 import com.flyingstudio.cumtfriend.utils.SPUtil;
 import com.flyingstudio.cumtfriend.view.LoginActivity;
+import com.flyingstudio.cumtfriend.view.SubjectAddActivity;
 import com.flyingstudio.cumtfriend.view.SubjectDetailActivity;
 import com.google.gson.Gson;
 import com.zhouyou.http.EasyHttp;
@@ -101,6 +102,7 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initView();
+
     }
 
     private void initView() {
@@ -269,7 +271,7 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
 
                             @Override
                             public void fail() {
-                                Log.d("LOGIN SUCCESS", "err: " );
+                                Log.d("LOGIN SUCCESS", "err: ");
                             }
                         }).execute("");
                         break;
@@ -380,42 +382,43 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
                 //日期栏0.1f、侧边栏0.1f，周次选择栏0.6f
                 //透明度范围为0->1，0为全透明，1为不透明
                 .alpha(0.1f, 0.1f, 0.6f)
-                .callback(new ISchedule.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View v, List<Schedule> scheduleList) {
-                        Log.d("TIME TABLE CLICK", "onItemClick: " + scheduleList.size());
-                        System.out.print("onItemClick" + scheduleList);
-                        Gson gson = new Gson();
+                // 设置点击事件
+                .callback((ISchedule.OnItemClickListener) (v, scheduleList) -> {
+                    Log.d("TIME TABLE CLICK", "onItemClick: " + scheduleList.size());
+                    System.out.print("onItemClick" + scheduleList);
+                    Gson gson = new Gson();
 
-                        Intent intent = new Intent(getContext(), SubjectDetailActivity.class);
-                        intent.putExtra("subjects", gson.toJson(scheduleList));
-                        getContext().startActivity(intent);
-                    }
+                    Intent intent = new Intent(getContext(), SubjectDetailActivity.class);
+                    intent.putExtra("subjects", gson.toJson(scheduleList));
+                    getContext().startActivity(intent);
                 })
-                .callback(new ISchedule.OnItemLongClickListener() {
-                    @Override
-                    public void onLongClick(View v, int day, int start) {
-                        Toast.makeText(getContext(),
-                                "长按:周" + day + ",第" + start + "节",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                })
+                // 设置长按事件 todo 弹出对话框 显示删除课程
+                .callback((v, day, start) -> Toast.makeText(getContext(),
+                        "长按:周" + day + ",第" + start + "节",
+                        Toast.LENGTH_SHORT).show())
+                // 设置第几周改变的事件
                 .callback(new ISchedule.OnWeekChangedListener() {
                     @Override
                     public void onWeekChanged(int curWeek) {
 //                        titleTextView.setText("第" + curWeek + "周");
                     }
                 })
-//                //旗标布局点击监听
-//                .callback(new ISchedule.OnFlaglayoutClickListener() {
-//                    @Override
-//                    public void onFlaglayoutClick(int day, int start) {
-//                        mTimetableView.hideFlaglayout();
-//                        Toast.makeText(BaseFuncActivity.this,
-//                                "点击了旗标:周" + (day + 1) + ",第" + start + "节",
-//                                Toast.LENGTH_SHORT).show();
-//                    }
-//                })
+                //旗标布局点击监听
+                .callback(new ISchedule.OnFlaglayoutClickListener() {
+                    @Override
+                    public void onFlaglayoutClick(int day, int start) {
+                        mTimetableView.hideFlaglayout();
+                        Toast.makeText(getContext(),
+                                "点击了旗标:周" + (day + 1) + ",第" + start + "节",
+                                Toast.LENGTH_SHORT).show();
+                        // todo 添加课程 emmm
+                        Intent intent = new Intent(getContext(), SubjectAddActivity.class);
+                        intent.putExtra("day", day + 1);
+                        intent.putExtra("start", start);
+                        startActivity(intent);
+
+                    }
+                })
                 .showView();
     }
 

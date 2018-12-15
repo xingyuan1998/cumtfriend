@@ -52,7 +52,8 @@
             android:name="UMENG_CHANNEL"
             android:value="Channel ID" />
 
-        <activity android:name=".view.SubjectDetailActivity"></activity>
+        <activity android:name=".view.SubjectDetailActivity" />
+        <activity android:name=".view.SubjectAddActivity"></activity>
     </application>
 
 </manifest>

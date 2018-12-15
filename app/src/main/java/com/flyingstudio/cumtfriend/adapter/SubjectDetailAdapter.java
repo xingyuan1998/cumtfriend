@@ -1,6 +1,9 @@
 package com.flyingstudio.cumtfriend.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,11 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.flyingstudio.cumtfriend.MainActivity;
 import com.flyingstudio.cumtfriend.R;
 import com.flyingstudio.cumtfriend.entity.Subject;
 import com.zhuangfei.timetable.model.Schedule;
 
 import org.jsoup.helper.StringUtil;
+import org.litepal.LitePal;
 
 import java.util.List;
 
@@ -42,6 +47,32 @@ public class SubjectDetailAdapter extends RecyclerView.Adapter<SubjectDetailAdap
         viewHolder.day.setText(subject.getStart() + "-" + (subject.getStart() + subject.getStep() - 1) + "节");
         viewHolder.room.setText(subject.getRoom());
         viewHolder.name.setText(subject.getName());
+        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                        .setTitle("确定删除课程吗")
+                        .setMessage("删除不可撤回，确实要删除吗？")
+                        .setNegativeButton("我只是开玩笑", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setPositiveButton("是的呀", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                LitePal.deleteAll(Subject.class, "name=? and  day=?", subject.getName(), "" + subject.getDay());
+                                Intent intent = new Intent(context, MainActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                context.startActivity(intent);
+                            }
+                        });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                return false;
+            }
+        });
     }
 
     @Override

@@ -126,7 +126,10 @@ public class LoginTask extends AsyncTask<String, Void, String> {
             Toast.makeText(context, "登录失败", Toast.LENGTH_LONG).show();
             if (loginCall != null) loginCall.fail();
         } else {
-            if (loginCall != null) {loginCall.success(s);return;}
+            if (loginCall != null) {
+                loginCall.success(s);
+                return;
+            }
 
             String user = SPUtil.getValue(context, "username");
             // 说明是第一次emmm
@@ -148,6 +151,7 @@ public class LoginTask extends AsyncTask<String, Void, String> {
 
                                         ACache cache = ACache.get(context);
                                         cache.put("good", "nice", 24 * 60 * 60);
+                                        SPUtil.setValue(context, "target_week", "1");
                                         Intent intent = new Intent(context, MainActivity.class);
                                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         context.startActivity(intent);
