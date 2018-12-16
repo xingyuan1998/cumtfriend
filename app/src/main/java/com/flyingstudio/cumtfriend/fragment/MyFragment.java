@@ -1,14 +1,30 @@
 package com.flyingstudio.cumtfriend.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.flyingstudio.cumtfriend.R;
+import com.flyingstudio.cumtfriend.entity.Exam;
+import com.flyingstudio.cumtfriend.entity.Record;
+import com.flyingstudio.cumtfriend.entity.Subject;
+import com.flyingstudio.cumtfriend.entity.User;
+import com.flyingstudio.cumtfriend.utils.SPUtil;
+import com.flyingstudio.cumtfriend.utils.UiUtil;
+import com.flyingstudio.cumtfriend.view.LoginActivity;
+
+import org.litepal.LitePal;
+
+import java.util.List;
 
 public class MyFragment extends Fragment {
 
@@ -55,6 +71,53 @@ public class MyFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        initView();
+        
+    }
+
+    private void initView() {
+
+        List<User> users = LitePal.findAll(User.class);
+        TextView name = getView().findViewById(R.id.username);
+        TextView gender = getView().findViewById(R.id.gender);
+        TextView school = getView().findViewById(R.id.school);
+        TextView major = getView().findViewById(R.id.major);
+        TextView stuNum = getView().findViewById(R.id.stuNum);
+        if(users.size() != 0){
+            User user = users.get(0);
+            name.setText(user.getName());
+            gender.setText(user.getGender());
+            school.setText(user.getSchool());
+            major.setText(user.getMajor());
+            stuNum.setText(user.getStuNum());
+        }
+
+
+
+
+
+        Button exit = getView().findViewById(R.id.exit);
+        exit.setOnClickListener(view -> {
+            // 删除所有的数据库数据
+            LitePal.deleteAll(User.class);
+            LitePal.deleteAll(Record.class);
+            LitePal.deleteAll(Exam.class);
+            LitePal.deleteAll(Subject.class);
+            SPUtil.setValue(getContext(), "JSESSIONID", null);
+            SPUtil.setValue(getContext(), "username", null);
+            SPUtil.setValue(getContext(), "password", null);
+            // 退出
+            Toast.makeText(getContext(), "退出成功", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(getContext(), LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(intent);
+
+        });
+
+    }
 
     @Override
     public void onDetach() {

@@ -3,9 +3,11 @@ package com.flyingstudio.cumtfriend;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -14,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,9 +24,11 @@ import com.flyingstudio.cumtfriend.adapter.FragmentAdapter;
 import com.flyingstudio.cumtfriend.entity.Update;
 import com.flyingstudio.cumtfriend.fragment.InfoFragment;
 import com.flyingstudio.cumtfriend.fragment.IndexFragment;
+import com.flyingstudio.cumtfriend.fragment.MyFragment;
 import com.flyingstudio.cumtfriend.fragment.TimeTableFragment;
 import com.flyingstudio.cumtfriend.net.Constant;
 import com.flyingstudio.cumtfriend.utils.SPUtil;
+import com.flyingstudio.cumtfriend.utils.UiUtil;
 import com.flyingstudio.cumtfriend.utils.VersionUtil;
 import com.flyingstudio.cumtfriend.view.LoginActivity;
 import com.umeng.analytics.MobclickAgent;
@@ -64,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_notifications:
                     viewPager.setCurrentItem(2);
                     return true;
+                case R.id.navigation_my:
+                    viewPager.setCurrentItem(3);
+                    return true;
             }
             return false;
         }
@@ -76,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
         if (SPUtil.getValue(MainActivity.this, "username") == null) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
 //            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
         checkUpdate();
@@ -88,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
         fragments.add(new IndexFragment());
         fragments.add(new TimeTableFragment());
         fragments.add(new InfoFragment());
+        fragments.add(new MyFragment());
         viewPager.setAdapter(new FragmentAdapter(getSupportFragmentManager(), fragments));
         viewPager.setOffscreenPageLimit(4);
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -123,6 +133,8 @@ public class MainActivity extends AppCompatActivity {
 //                        Manifest.permission.REQUEST_INSTALL_PACKAGES,
                         Manifest.permission.READ_EXTERNAL_STORAGE)
                 .request();
+
+        UiUtil.setImmerseLayout(getWindow());
 
     }
 

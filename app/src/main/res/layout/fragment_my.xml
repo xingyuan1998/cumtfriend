@@ -1,14 +1,179 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#f5f5f5"
     tools:context=".fragment.MyFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
+        android:background="#fff"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="30dp"
+        android:paddingTop="30dp"
+        android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content">
 
-</FrameLayout>
+        <ImageView
+            android:src="@drawable/kaoshi"
+            android:layout_gravity="center"
+            android:id="@+id/avatar"
+            android:padding="10dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
+
+        <TextView
+            android:padding="5dp"
+            android:textSize="18sp"
+            android:textColor="#000"
+            android:text="时间"
+            android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="#fff"-->
+        <!--android:padding="5dp"-->
+        <!--android:orientation="horizontal">-->
+
+        <!--<ImageView-->
+            <!--android:layout_width="30dp"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:src="@drawable/didian"-->
+            <!--android:layout_margin="10dp"-->
+            <!--/>-->
+
+        <!--<TextView-->
+            <!--android:layout_gravity="center"-->
+            <!--android:id="@+id/subject_week"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="姓名：张三"-->
+            <!--android:textColor="#000"-->
+            <!--android:textSize="18dp" />-->
+
+    <!--</LinearLayout>-->
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fff"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:text="性别"
+            android:textSize="18dp" />
+
+        <TextView
+            android:id="@+id/gender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="男"
+            android:textColor="#000"
+            android:textSize="18dp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fff"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:text="学号"
+            android:textSize="18dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="12345667"
+            android:id="@+id/stuNum"
+            android:textColor="#000"
+            android:textSize="18dp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fff"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:text="学院"
+            android:textSize="18dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="计算机科学与技术"
+            android:id="@+id/school"
+            android:textColor="#000"
+            android:textSize="18dp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fff"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:text="专业"
+            android:textSize="18dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="这是一个智障"
+            android:id="@+id/major"
+            android:textColor="#000"
+            android:textSize="18dp" />
+
+    </LinearLayout>
+
+
+
+    <Button
+        android:id="@+id/exit"
+        android:textSize="20sp"
+        android:layout_margin="10dp"
+        android:padding="10dp"
+        android:textColor="#fff"
+        android:background="@drawable/btn_bg_red"
+        android:text="退出登录"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+
+
+
+</LinearLayout>

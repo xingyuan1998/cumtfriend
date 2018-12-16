@@ -1,111 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout android:orientation="vertical"
+    android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#f5f5f5"
-    tools:context=".fragment.InfoFragment">
-
-    <LinearLayout
-        android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#f5f5f5"
+        tools:context=".fragment.InfoFragment">
 
         <LinearLayout
-            android:layout_marginTop="5dp"
-            android:layout_width="match_parent"
             android:orientation="vertical"
-            android:background="#fff"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
+
             <LinearLayout
-                android:orientation="horizontal"
+                android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:background="#fff"
                 android:layout_height="wrap_content">
-                <ImageView
-                    android:layout_margin="5dp"
-                    android:padding="5dp"
-                    android:src="@drawable/kaoshi"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp" />
-                <TextView
-                    android:textColor="#000"
-                    android:textSize="25sp"
-                    android:layout_marginLeft="25dp"
-                    android:gravity="left"
-                    android:layout_gravity="center"
-                    android:text="最近考试"
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_margin="5dp"
+                        android:padding="5dp"
+                        android:src="@drawable/kaoshi"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp" />
+                    <TextView
+                        android:textColor="#000"
+                        android:textSize="25sp"
+                        android:layout_marginLeft="25dp"
+                        android:gravity="left"
+                        android:layout_gravity="center"
+                        android:text="最近考试"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/exam_rec"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </android.support.v7.widget.RecyclerView>
+
+                <TextView
+                    android:id="@+id/exam_blank"
+                    android:gravity="center"
+                    android:text="暂无"
+                    android:padding="10dp"
+                    android:textSize="20sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
             </LinearLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/exam_rec"
+
+            <LinearLayout
+                android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:background="#fff"
                 android:layout_height="wrap_content">
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_margin="5dp"
+                        android:padding="3dp"
+                        android:src="@drawable/chengji"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp" />
+                    <TextView
+                        android:textColor="#000"
+                        android:textSize="25sp"
+                        android:layout_marginLeft="25dp"
+                        android:gravity="left"
+                        android:layout_gravity="center"
+                        android:text="最新成绩"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
 
-            </android.support.v7.widget.RecyclerView>
+                <TextView
+                    android:id="@+id/record_blank"
+                    android:gravity="center"
+                    android:text="暂无"
+                    android:padding="10dp"
+                    android:textSize="20sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
-            <TextView
-                android:id="@+id/exam_blank"
-                android:gravity="center"
-                android:text="暂无"
-                android:padding="10dp"
-                android:textSize="20sp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/record_rec"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </android.support.v7.widget.RecyclerView>
+            </LinearLayout>
+
+
         </LinearLayout>
 
 
-        <LinearLayout
-            android:layout_marginTop="5dp"
-            android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:background="#fff"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:layout_margin="5dp"
-                    android:padding="3dp"
-                    android:src="@drawable/chengji"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp" />
-                <TextView
-                    android:textColor="#000"
-                    android:textSize="25sp"
-                    android:layout_marginLeft="25dp"
-                    android:gravity="left"
-                    android:layout_gravity="center"
-                    android:text="最新成绩"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/record_blank"
-                android:gravity="center"
-                android:text="暂无"
-                android:padding="10dp"
-                android:textSize="20sp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/record_rec"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            </android.support.v7.widget.RecyclerView>
-        </LinearLayout>
 
 
-    </LinearLayout>
+    </ScrollView>
 
+</LinearLayout>
 
-
-
-</ScrollView>

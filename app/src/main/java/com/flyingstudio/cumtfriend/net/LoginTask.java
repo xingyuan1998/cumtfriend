@@ -139,22 +139,34 @@ public class LoginTask extends AsyncTask<String, Void, String> {
                 SPUtil.setValue(context, "password", pwdForward);
                 SPUtil.setValue(context, "JSESSIONID", s);
                 Log.d("GET TIMETABLE", "onPostExecute: ");
-                new ScheduleTask(context, s, new ScheduleTask.ScheduleTaskFinish() {
+
+                new UserInfoTask(context, s,stuNum, new UserInfoTask.GetUserInfoCallback(){
+
                     @Override
-                    public void finish() {
-                        new ExamTask(context, s, stuNum, 2018, 1, new ExamTask.ExamTaskFinish() {
+                    public void success() {
+                        new ScheduleTask(context, s, new ScheduleTask.ScheduleTaskFinish() {
                             @Override
                             public void finish() {
-                                new GradeTask(context, s, stuNum, 2018, 1, new GradeTask.GradeTaskFinish() {
+                                new ExamTask(context, s, stuNum, 2018, 1, new ExamTask.ExamTaskFinish() {
                                     @Override
                                     public void finish() {
+                                        new GradeTask(context, s, stuNum, 2018, 1, new GradeTask.GradeTaskFinish() {
+                                            @Override
+                                            public void finish() {
 
-                                        ACache cache = ACache.get(context);
-                                        cache.put("good", "nice", 24 * 60 * 60);
-                                        SPUtil.setValue(context, "target_week", "1");
-                                        Intent intent = new Intent(context, MainActivity.class);
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                        context.startActivity(intent);
+                                                ACache cache = ACache.get(context);
+                                                cache.put("good", "nice", 24 * 60 * 60);
+                                                SPUtil.setValue(context, "target_week", "1");
+                                                Intent intent = new Intent(context, MainActivity.class);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                context.startActivity(intent);
+                                            }
+
+                                            @Override
+                                            public void fail() {
+
+                                            }
+                                        }).execute("");
                                     }
 
                                     @Override
@@ -166,15 +178,16 @@ public class LoginTask extends AsyncTask<String, Void, String> {
 
                             @Override
                             public void fail() {
-
                             }
                         }).execute("");
                     }
 
                     @Override
-                    public void fail() {
+                    public void error() {
+
                     }
                 }).execute("");
+
             } else {
                 new ExamTask(context, s, stuNum, 2018, 1, new ExamTask.ExamTaskFinish() {
                     @Override

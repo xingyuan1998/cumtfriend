@@ -19,6 +19,7 @@ import com.flyingstudio.cumtfriend.adapter.IndexRecAdapter;
 import com.flyingstudio.cumtfriend.entity.Index;
 import com.flyingstudio.cumtfriend.net.Constant;
 import com.flyingstudio.cumtfriend.utils.SPUtil;
+import com.flyingstudio.cumtfriend.utils.UiUtil;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.cache.model.CacheMode;
 import com.zhouyou.http.callback.SimpleCallBack;
@@ -72,10 +73,6 @@ public class IndexFragment extends Fragment {
     private void initView() {
 
 
-        Toolbar toolbar = getView().findViewById(R.id.toolbar);
-        MainActivity activity = (MainActivity) getActivity();
-        activity.setSupportActionBar(toolbar);
-        activity.setTitle("快速导航");
 
         indexRecyclerView = getView().findViewById(R.id.index_rec);
         indexRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 5, GridLayoutManager.VERTICAL, false));
