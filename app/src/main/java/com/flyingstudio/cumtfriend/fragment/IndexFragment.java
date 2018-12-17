@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.flyingstudio.cumtfriend.MainActivity;
 import com.flyingstudio.cumtfriend.R;
@@ -33,8 +34,11 @@ public class IndexFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private RecyclerView indexRecyclerView;
+    private RecyclerView kitRecyclerView;
     private IndexRecAdapter indexRecAdapter;
-    private List<Index> indices;
+    private IndexRecAdapter kitRecAapter;
+    private List<Index> webs;
+    private List<Index> kits;
 
     private String mParam1;
     private String mParam2;
@@ -76,6 +80,10 @@ public class IndexFragment extends Fragment {
 
         indexRecyclerView = getView().findViewById(R.id.index_rec);
         indexRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 5, GridLayoutManager.VERTICAL, false));
+        kitRecyclerView = getView().findViewById(R.id.kit_rec);
+        kitRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 5, GridLayoutManager.VERTICAL, false));
+
+
         EasyHttp.get(Constant.GET_INDEX)
                 .baseUrl(Constant.BASE_URL)
 //                    .headers("token", token)
@@ -97,12 +105,29 @@ public class IndexFragment extends Fragment {
                     public void onSuccess(List<Index> indices) {
                         Log.e("GET_INDEX", "onSuccess: " + indices.size());
                         if (indices != null) {
+                            for (Index i:indices) {
+                                if (i.getType().equals("web")){
+                                    webs.add(i);
+                                }else {
+                                    kits.add(i);
+                                }
+                            }
+
                             if (indexRecAdapter == null) {
-                                indexRecAdapter = new IndexRecAdapter(indices, getContext());
+                                indexRecAdapter = new IndexRecAdapter(webs, getContext());
                                 indexRecyclerView.setAdapter(indexRecAdapter);
                             } else {
                                 indexRecAdapter.notifyDataSetChanged();
                             }
+                            if (kitRecAapter == null){
+                                kitRecAapter = new IndexRecAdapter(kits, getContext());
+                                kitRecyclerView.setAdapter(kitRecAapter);
+                            }
+
+                            TextView indexBlank = getView().findViewById(R.id.index_blank);
+                            TextView kitBlank = getView().findViewById(R.id.kit_blank);
+                            if (webs.size() != 0)indexBlank.setVisibility(View.GONE);
+                            if (kits.size() != 0)kitBlank.setVisibility(View.GONE);
                         }
                     }
                 });
