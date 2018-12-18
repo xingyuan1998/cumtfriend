@@ -1,5 +1,6 @@
 package com.flyingstudio.cumtfriend.fragment;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -87,6 +88,7 @@ public class IndexFragment extends Fragment {
 
     private void initView() {
         String week = SPUtil.getValue(getContext(), "target_week");
+        if (TextUtils.isEmpty(week))week = "1";
         int thisWeek = Integer.parseInt(week);
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
@@ -106,7 +108,7 @@ public class IndexFragment extends Fragment {
         }
 
         TextView subjectBlank = getView().findViewById(R.id.subject_blank);
-        if (subjectToday.size() > 0)subjectBlank.setVisibility(View.GONE);
+        if (subjectToday.size() > 0) subjectBlank.setVisibility(View.GONE);
 
         SubjectRecAdapter adapter = new SubjectRecAdapter(getContext(), subjectToday);
         subjectRecyclerView.setAdapter(adapter);

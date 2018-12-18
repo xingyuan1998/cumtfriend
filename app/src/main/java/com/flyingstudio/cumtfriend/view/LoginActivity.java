@@ -1,6 +1,7 @@
 package com.flyingstudio.cumtfriend.view;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,9 +12,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.tu.loadingdialog.LoadingDailog;
 import com.flyingstudio.cumtfriend.R;
 import com.flyingstudio.cumtfriend.net.LoginTask;
 import com.flyingstudio.cumtfriend.utils.SPUtil;
+import com.flyingstudio.cumtfriend.utils.UiUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -94,7 +97,19 @@ public class LoginActivity extends AppCompatActivity {
 //                }
 //            }).start();
 
+//            LoadingDailog.Builder loadBuilder=new LoadingDailog.Builder(this)
+//                    .setMessage("登录中...")
+//                    .setCancelable(true)
+//                    .setCancelOutside(true);
+//            LoadingDailog dialog=loadBuilder.create();
+//            dialog.show();
+
+
             new LoginTask(LoginActivity.this, usernameText, pwdText).execute("");
+
+            UiUtil.setImmerseLayout(getWindow());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                getWindow().setStatusBarColor(getResources().getColor(R.color.app_white_slight));
 
 
 //            EasyHttp.post(Constant.Login)
