@@ -40,12 +40,12 @@ public class IndexRecAdapter extends RecyclerView.Adapter<IndexRecAdapter.ViewHo
         viewHolder.title.setText(index.getTitle());
         Glide.with(context).load(index.getIcon()).into(viewHolder.icon);
         viewHolder.itemView.setOnClickListener(v -> {
-            if (index.getType().equals("web")) {
+//            if (index.getType().equals("web")) {
                 Log.d("HHHH", "onBindViewHolder: " + index.getValue());
                 Intent intent = new Intent(context, WebViewActivity.class);
                 intent.putExtra("url", index.getValue());
                 context.startActivity(intent);
-            }
+//            }
         });
 
     }

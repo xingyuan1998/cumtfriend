@@ -123,8 +123,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        viewPager.setCurrentItem(1);
-        navigation.getMenu().getItem(1).setChecked(true);
+//        viewPager.setCurrentItem(1);
+//        navigation.getMenu().getItem(1).setChecked(true);
         // 申请权限
         PermissionGen.with(MainActivity.this).addRequestCode(100)
                 .permissions(
@@ -135,6 +135,8 @@ public class MainActivity extends AppCompatActivity {
                 .request();
 
         UiUtil.setImmerseLayout(getWindow());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            getWindow().setStatusBarColor(getResources().getColor(R.color.app_white_slight));
 
     }
 

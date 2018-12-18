@@ -18,8 +18,8 @@
 
     <item
         android:id="@+id/navigation_my"
-        android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/title_notifications" />
+        android:icon="@drawable/wode"
+        android:title="@string/my" />
 
 
 </menu>

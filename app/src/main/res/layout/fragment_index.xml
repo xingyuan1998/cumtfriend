@@ -6,107 +6,159 @@
     android:layout_height="match_parent"
     tools:context=".fragment.IndexFragment">
 
-
-
-    <LinearLayout
-        android:orientation="vertical"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
         <LinearLayout
-            android:layout_marginTop="5dp"
-            android:layout_width="match_parent"
             android:orientation="vertical"
-            android:background="#fff"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
+
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:background="#fff"
+                android:layout_marginBottom="5dp"
                 android:layout_height="wrap_content">
-                <ImageView
-                    android:layout_margin="5dp"
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_margin="5dp"
+                        android:padding="8dp"
+                        android:src="@drawable/daohang"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp" />
+                    <TextView
+                        android:textColor="#000"
+                        android:textSize="25sp"
+                        android:layout_marginLeft="20dp"
+                        android:gravity="left"
+                        android:layout_gravity="center"
+                        android:text="今日课程"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/subject_rec"
                     android:padding="5dp"
-                    android:src="@drawable/kaoshi"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp" />
-                <TextView
-                    android:textColor="#000"
-                    android:textSize="25sp"
-                    android:layout_marginLeft="25dp"
-                    android:gravity="left"
-                    android:layout_gravity="center"
-                    android:text="实用工具"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content">
+
+                </android.support.v7.widget.RecyclerView>
+
+                <TextView
+                    android:id="@+id/subject_blank"
+                    android:gravity="center"
+                    android:text="今天没有课程"
+                    android:padding="10dp"
+                    android:textSize="20sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
             </LinearLayout>
 
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/index_rec"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            </android.support.v7.widget.RecyclerView>
-
-            <TextView
-                android:id="@+id/index_blank"
-                android:gravity="center"
-                android:text="暂无"
-                android:padding="10dp"
-                android:textSize="20sp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_marginTop="5dp"
-            android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:background="#fff"
-            android:layout_height="wrap_content">
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:background="#fff"
                 android:layout_height="wrap_content">
-                <ImageView
-                    android:layout_margin="5dp"
-                    android:padding="3dp"
-                    android:src="@drawable/chengji"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp" />
-                <TextView
-                    android:textColor="#000"
-                    android:textSize="25sp"
-                    android:layout_marginLeft="25dp"
-                    android:gravity="left"
-                    android:layout_gravity="center"
-                    android:text="快速导航"
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_margin="5dp"
+                        android:padding="8dp"
+                        android:src="@drawable/daohang"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp" />
+                    <TextView
+                        android:textColor="#000"
+                        android:textSize="25sp"
+                        android:layout_marginLeft="20dp"
+                        android:gravity="left"
+                        android:layout_gravity="center"
+                        android:text="快速导航"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/index_rec"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </android.support.v7.widget.RecyclerView>
+
+                <TextView
+                    android:id="@+id/index_blank"
+                    android:gravity="center"
+                    android:text="暂无"
+                    android:padding="10dp"
+                    android:textSize="20sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
             </LinearLayout>
 
 
-            <TextView
-                android:id="@+id/kit_blank"
-                android:gravity="center"
-                android:text="暂无"
-                android:padding="10dp"
-                android:textSize="20sp"
+            <LinearLayout
+                android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/kit_rec"
-                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:background="#fff"
                 android:layout_height="wrap_content">
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_margin="5dp"
+                        android:padding="8dp"
+                        android:src="@drawable/gongju"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp" />
+                    <TextView
+                        android:textColor="#000"
+                        android:textSize="25sp"
+                        android:layout_marginLeft="20dp"
+                        android:gravity="left"
+                        android:layout_gravity="center"
+                        android:text="实用工具"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
 
-            </android.support.v7.widget.RecyclerView>
+
+                <TextView
+                    android:id="@+id/kit_blank"
+                    android:gravity="center"
+                    android:text="暂无"
+                    android:padding="10dp"
+                    android:textSize="20sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/kit_rec"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </android.support.v7.widget.RecyclerView>
+            </LinearLayout>
+
+
         </LinearLayout>
+    </ScrollView>
 
 
-    </LinearLayout>
+
 
 
 

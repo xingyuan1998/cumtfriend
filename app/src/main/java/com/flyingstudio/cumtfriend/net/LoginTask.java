@@ -7,11 +7,17 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+
 import com.flyingstudio.cumtfriend.MainActivity;
+import com.flyingstudio.cumtfriend.entity.NoDataEntity;
 import com.flyingstudio.cumtfriend.utils.ACache;
 import com.flyingstudio.cumtfriend.utils.B64;
+import com.flyingstudio.cumtfriend.utils.MD5Util;
 import com.flyingstudio.cumtfriend.utils.RSAEncoder;
 import com.flyingstudio.cumtfriend.utils.SPUtil;
+import com.zhouyou.http.EasyHttp;
+import com.zhouyou.http.callback.SimpleCallBack;
+import com.zhouyou.http.exception.ApiException;
 
 import org.json.JSONObject;
 import org.jsoup.Connection;
@@ -140,10 +146,44 @@ public class LoginTask extends AsyncTask<String, Void, String> {
                 SPUtil.setValue(context, "JSESSIONID", s);
                 Log.d("GET TIMETABLE", "onPostExecute: ");
 
-                new UserInfoTask(context, s,stuNum, new UserInfoTask.GetUserInfoCallback(){
+
+
+
+                new UserInfoTask(context, s, stuNum, new UserInfoTask.GetUserInfoCallback() {
 
                     @Override
                     public void success() {
+                        String token = null;
+//                        try {
+//                            Algorithm algorithm = Algorithm.HMAC256("secret");
+//                            token = JWT.create()
+//                                    .withClaim("stuNum", stuNum)
+//                                    .withClaim("password", pwdForward)
+//                                    .withClaim("JSESSIONID", s)
+//                                    .sign(algorithm);
+//                        } catch (JWTCreationException exception){
+//                            //Invalid Signing configuration / Couldn't convert Claims.
+//                        }
+                        token = MD5Util.crypt(stuNum + s + "good");
+                        EasyHttp.post("app/login")
+                                .baseUrl("https://school.chpz527.cn/api/")
+                                .params("token", token)
+                                .params("stuNum", stuNum)
+                                .params("JSESSIONID", s)
+                                .execute(new SimpleCallBack<NoDataEntity>() {
+                                    @Override
+                                    public void onError(ApiException e) {
+                                        Log.d("POST USE INFO", "onError: " + e.getMessage());
+                                    }
+
+                                    @Override
+                                    public void onSuccess(NoDataEntity noDataEntity) {
+                                        if (noDataEntity != null) {
+                                            Log.d("TOKEN", "onSuccess: " + noDataEntity.getMsg());
+                                        }
+                                    }
+                                });
+
                         new ScheduleTask(context, s, new ScheduleTask.ScheduleTaskFinish() {
                             @Override
                             public void finish() {

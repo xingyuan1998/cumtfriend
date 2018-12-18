@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -12,12 +13,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.flyingstudio.cumtfriend.MainActivity;
 import com.flyingstudio.cumtfriend.R;
 import com.flyingstudio.cumtfriend.adapter.IndexRecAdapter;
+import com.flyingstudio.cumtfriend.adapter.SubjectRecAdapter;
 import com.flyingstudio.cumtfriend.entity.Index;
+import com.flyingstudio.cumtfriend.entity.Subject;
 import com.flyingstudio.cumtfriend.net.Constant;
 import com.flyingstudio.cumtfriend.utils.SPUtil;
 import com.flyingstudio.cumtfriend.utils.UiUtil;
@@ -26,6 +30,11 @@ import com.zhouyou.http.cache.model.CacheMode;
 import com.zhouyou.http.callback.SimpleCallBack;
 import com.zhouyou.http.exception.ApiException;
 
+import org.litepal.LitePal;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 
@@ -35,10 +44,12 @@ public class IndexFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private RecyclerView indexRecyclerView;
     private RecyclerView kitRecyclerView;
+    private RecyclerView subjectRecyclerView;
+    private SubjectRecAdapter subjectRecAdapter;
     private IndexRecAdapter indexRecAdapter;
     private IndexRecAdapter kitRecAapter;
-    private List<Index> webs;
-    private List<Index> kits;
+    private List<Index> webs = new ArrayList<>();
+    private List<Index> kits = new ArrayList<>();
 
     private String mParam1;
     private String mParam2;
@@ -75,7 +86,30 @@ public class IndexFragment extends Fragment {
     }
 
     private void initView() {
+        String week = SPUtil.getValue(getContext(), "target_week");
+        int thisWeek = Integer.parseInt(week);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
+        if (w < 0) w = 7;
+        Log.d("THIS WEEK", "initView: " + w);
 
+
+        subjectRecyclerView = getView().findViewById(R.id.subject_rec);
+        subjectRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayout.VERTICAL, false));
+        List<Subject> subjects = LitePal.findAll(Subject.class);
+        List<Subject> subjectToday = new ArrayList<>();
+        for (Subject subject : subjects) {
+            if (subject.getWeek_list().contains(thisWeek) && subject.getDay() == w) {
+                subjectToday.add(subject);
+            }
+        }
+
+        TextView subjectBlank = getView().findViewById(R.id.subject_blank);
+        if (subjectToday.size() > 0)subjectBlank.setVisibility(View.GONE);
+
+        SubjectRecAdapter adapter = new SubjectRecAdapter(getContext(), subjectToday);
+        subjectRecyclerView.setAdapter(adapter);
 
 
         indexRecyclerView = getView().findViewById(R.id.index_rec);
@@ -105,13 +139,14 @@ public class IndexFragment extends Fragment {
                     public void onSuccess(List<Index> indices) {
                         Log.e("GET_INDEX", "onSuccess: " + indices.size());
                         if (indices != null) {
-                            for (Index i:indices) {
-                                if (i.getType().equals("web")){
+                            for (Index i : indices) {
+                                if (i.getType().equals("web")) {
                                     webs.add(i);
-                                }else {
+                                } else {
                                     kits.add(i);
                                 }
                             }
+                            Log.d("TAS", "onSuccess: " + webs.size() + kits.size());
 
                             if (indexRecAdapter == null) {
                                 indexRecAdapter = new IndexRecAdapter(webs, getContext());
@@ -119,15 +154,15 @@ public class IndexFragment extends Fragment {
                             } else {
                                 indexRecAdapter.notifyDataSetChanged();
                             }
-                            if (kitRecAapter == null){
+                            if (kitRecAapter == null) {
                                 kitRecAapter = new IndexRecAdapter(kits, getContext());
                                 kitRecyclerView.setAdapter(kitRecAapter);
                             }
 
                             TextView indexBlank = getView().findViewById(R.id.index_blank);
                             TextView kitBlank = getView().findViewById(R.id.kit_blank);
-                            if (webs.size() != 0)indexBlank.setVisibility(View.GONE);
-                            if (kits.size() != 0)kitBlank.setVisibility(View.GONE);
+                            if (webs.size() != 0) indexBlank.setVisibility(View.GONE);
+                            if (kits.size() != 0) kitBlank.setVisibility(View.GONE);
                         }
                     }
                 });
