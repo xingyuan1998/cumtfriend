@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -42,6 +43,15 @@ public class SubjectAddActivity extends AppCompatActivity {
     }
 
     private void initView() {
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        setTitle("添加课程");
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        toolbar.setNavigationOnClickListener(v -> finish());
+
         Intent intent = getIntent();
         daySec = intent.getIntExtra("day", -1);
         startSec = intent.getIntExtra("start", -1);

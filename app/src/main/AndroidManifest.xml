@@ -49,8 +49,11 @@
             android:name="UMENG_CHANNEL"
             android:value="Channel ID" />
 
-        <activity android:name=".view.SubjectDetailActivity" />
-        <activity android:name=".view.SubjectAddActivity" />
+        <activity android:name=".view.SubjectDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
+        <activity android:name=".view.SubjectAddActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <receiver android:name=".view.SubjectWidget">
             <intent-filter>

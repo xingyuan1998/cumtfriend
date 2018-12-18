@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.widget.LinearLayout;
 
 import com.flyingstudio.cumtfriend.R;
@@ -28,6 +29,17 @@ public class SubjectDetailActivity extends AppCompatActivity {
     }
 
     private void initView() {
+
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        setTitle("课程详情");
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        toolbar.setNavigationOnClickListener(v -> finish());
+
+
         Intent intent = getIntent();
         String ScheduleText = intent.getStringExtra("subjects");
         Gson gson = new Gson();
