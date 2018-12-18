@@ -408,9 +408,12 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
                     getContext().startActivity(intent);
                 })
                 // 设置长按事件 todo 弹出对话框 显示删除课程
-                .callback((v, day, start) -> Toast.makeText(getContext(),
-                        "长按:周" + day + ",第" + start + "节",
-                        Toast.LENGTH_SHORT).show())
+                .callback(new ISchedule.OnItemLongClickListener() {
+                    @Override
+                    public void onLongClick(View v, int day, int start) {
+
+                    }
+                })
                 // 设置第几周改变的事件
                 .callback(new ISchedule.OnWeekChangedListener() {
                     @Override
