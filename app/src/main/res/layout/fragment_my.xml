@@ -152,7 +152,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="这是一个智障"
+            android:text="这是一个错误信息展示"
             android:id="@+id/major"
             android:textColor="#000"
             android:textSize="18dp" />
