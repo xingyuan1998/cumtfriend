@@ -330,6 +330,7 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
      */
     protected void hideNonThisWeek() {
         mTimetableView.isShowNotCurWeek(false).updateView();
+        SPUtil.setValue(getContext(), "showWeek", "false");
     }
 
     /**
@@ -339,6 +340,7 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
      */
     protected void showNonThisWeek() {
         mTimetableView.isShowNotCurWeek(true).updateView();
+        SPUtil.setValue(getContext(), "showWeek", "true");
     }
 
     /**
@@ -354,6 +356,14 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
     private void initTimetableView() {
 
 //        Log.e("INIT", "initTimetableView: " + subjects.size());
+        // 第一次初始化配置
+        String showWeek = SPUtil.getValue(getContext(), "showWeek");
+        String showWeeked = SPUtil.getValue(getContext(), "showWeeked");
+        String showTime = SPUtil.getValue(getContext(), "showTime");
+        if (TextUtils.isEmpty(showTime)){SPUtil.setValue(getContext(), "showTime", "false");showTime = "false";}
+        if (TextUtils.isEmpty(showWeeked)) {SPUtil.setValue(getContext(), "showWeeked", "false");showWeeked = "false";}
+        if (TextUtils.isEmpty(showWeek)) {SPUtil.setValue(getContext(), "showWeek","false");showWeek = "false";}
+
 
         //设置周次选择属性
         mWeekView.source(mySubjects)
@@ -413,9 +423,9 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
                     @Override
                     public void onFlaglayoutClick(int day, int start) {
                         mTimetableView.hideFlaglayout();
-                        Toast.makeText(getContext(),
-                                "点击了旗标:周" + (day + 1) + ",第" + start + "节",
-                                Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getContext(),
+//                                "点击了旗标:周" + (day + 1) + ",第" + start + "节",
+//                                Toast.LENGTH_SHORT).show();
                         // todo 添加课程 emmm
                         Intent intent = new Intent(getContext(), SubjectAddActivity.class);
                         intent.putExtra("day", day + 1);
@@ -425,6 +435,18 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
                     }
                 })
                 .showView();
+
+
+                if (showWeeked.equals("false"))hideWeekends();
+                else showWeekends();
+
+                if (showTime.equals("false")) hideTime();
+                else showTime();
+
+                if (showWeek.equals("false"))hideNonThisWeek();
+                else showNonThisWeek();
+
+
     }
 
     protected void onWeekLeftLayoutClicked() {
@@ -466,6 +488,7 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
     protected void hideTime() {
         mTimetableView.callback((ISchedule.OnSlideBuildListener) null);
         mTimetableView.updateSlideView();
+        SPUtil.setValue(getContext(), "showTime", "false");
     }
 
     /**
@@ -473,6 +496,7 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
      */
     protected void showWeekView() {
         mWeekView.isShow(true);
+
     }
 
     /**
@@ -480,6 +504,7 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
      */
     protected void hideWeekView() {
         mWeekView.isShow(false);
+
     }
 
     /**
@@ -501,6 +526,7 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
      */
     private void hideWeekends() {
         mTimetableView.isShowWeekends(false).updateView();
+        SPUtil.setValue(getContext(), "showWeeked", "false");
     }
 
     /**
@@ -508,6 +534,7 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
      */
     private void showWeekends() {
         mTimetableView.isShowWeekends(true).updateView();
+        SPUtil.setValue(getContext(), "showWeeked", "true");
     }
 
     protected void showTime() {
@@ -520,6 +547,7 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
         listener.setTimes(times)
                 .setTimeTextColor(Color.BLACK);
         mTimetableView.updateSlideView();
+        SPUtil.setValue(getContext(), "showTime", "true");
     }
 
     public void onButtonPressed(Uri uri) {
