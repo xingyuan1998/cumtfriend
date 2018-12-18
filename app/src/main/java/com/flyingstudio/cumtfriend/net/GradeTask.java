@@ -39,12 +39,23 @@ public class GradeTask extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... strings) {
         try {
             getStudentGrade(this.year, this.term);
-            this.taskFinish.finish();
+            return "ok";
         } catch (Exception e) {
             e.printStackTrace();
-            this.taskFinish.fail();
+//            this.taskFinish.fail();
+            return "err";
         }
-        return null;
+//        return null;
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        super.onPostExecute(s);
+        if (s.equals("ok")){
+            this.taskFinish.finish();
+        }else {
+            taskFinish.fail();
+        }
     }
 
     public void getStudentGrade(int year, int term) throws Exception {

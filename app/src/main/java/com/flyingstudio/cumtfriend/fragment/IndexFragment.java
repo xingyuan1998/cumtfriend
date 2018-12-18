@@ -89,7 +89,7 @@ public class IndexFragment extends Fragment {
     private void initView() {
         String week = SPUtil.getValue(getContext(), "target_week");
         if (TextUtils.isEmpty(week))week = "1";
-        int thisWeek = Integer.parseInt(week);
+        int thisWeek = Integer.parseInt(week) + 1;
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         int w = cal.get(Calendar.DAY_OF_WEEK) - 1;

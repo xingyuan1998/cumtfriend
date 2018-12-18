@@ -134,122 +134,6 @@ public class LoginTask extends AsyncTask<String, Void, String> {
         } else {
             if (loginCall != null) {
                 loginCall.success(s);
-                return;
-            }
-
-            String user = SPUtil.getValue(context, "username");
-            // 说明是第一次emmm
-            if (TextUtils.isEmpty(user)) {
-                Toast.makeText(context, "登录成功", Toast.LENGTH_LONG).show();
-                SPUtil.setValue(context, "username", stuNum);
-                SPUtil.setValue(context, "password", pwdForward);
-                SPUtil.setValue(context, "JSESSIONID", s);
-                Log.d("GET TIMETABLE", "onPostExecute: ");
-
-
-
-
-                new UserInfoTask(context, s, stuNum, new UserInfoTask.GetUserInfoCallback() {
-
-                    @Override
-                    public void success() {
-                        String token = null;
-//                        try {
-//                            Algorithm algorithm = Algorithm.HMAC256("secret");
-//                            token = JWT.create()
-//                                    .withClaim("stuNum", stuNum)
-//                                    .withClaim("password", pwdForward)
-//                                    .withClaim("JSESSIONID", s)
-//                                    .sign(algorithm);
-//                        } catch (JWTCreationException exception){
-//                            //Invalid Signing configuration / Couldn't convert Claims.
-//                        }
-                        token = MD5Util.crypt(stuNum + s + "good");
-                        EasyHttp.post("app/login")
-                                .baseUrl("https://school.chpz527.cn/api/")
-                                .params("token", token)
-                                .params("stuNum", stuNum)
-                                .params("JSESSIONID", s)
-                                .execute(new SimpleCallBack<NoDataEntity>() {
-                                    @Override
-                                    public void onError(ApiException e) {
-                                        Log.d("POST USE INFO", "onError: " + e.getMessage());
-                                    }
-
-                                    @Override
-                                    public void onSuccess(NoDataEntity noDataEntity) {
-                                        if (noDataEntity != null) {
-                                            Log.d("TOKEN", "onSuccess: " + noDataEntity.getMsg());
-                                        }
-                                    }
-                                });
-
-                        new ScheduleTask(context, s, new ScheduleTask.ScheduleTaskFinish() {
-                            @Override
-                            public void finish() {
-                                new ExamTask(context, s, stuNum, 2018, 1, new ExamTask.ExamTaskFinish() {
-                                    @Override
-                                    public void finish() {
-                                        new GradeTask(context, s, stuNum, 2018, 1, new GradeTask.GradeTaskFinish() {
-                                            @Override
-                                            public void finish() {
-
-                                                ACache cache = ACache.get(context);
-                                                cache.put("good", "nice", 24 * 60 * 60);
-                                                SPUtil.setValue(context, "target_week", "1");
-                                                Intent intent = new Intent(context, MainActivity.class);
-                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                context.startActivity(intent);
-                                            }
-
-                                            @Override
-                                            public void fail() {
-
-                                            }
-                                        }).execute("");
-                                    }
-
-                                    @Override
-                                    public void fail() {
-
-                                    }
-                                }).execute("");
-                            }
-
-                            @Override
-                            public void fail() {
-                            }
-                        }).execute("");
-                    }
-
-                    @Override
-                    public void error() {
-
-                    }
-                }).execute("");
-
-            } else {
-                new ExamTask(context, s, stuNum, 2018, 1, new ExamTask.ExamTaskFinish() {
-                    @Override
-                    public void finish() {
-                        new GradeTask(context, s, stuNum, 2018, 1, new GradeTask.GradeTaskFinish() {
-                            @Override
-                            public void finish() {
-                                ACache cache = ACache.get(context);
-                                cache.put("good", "nice", 24 * 60 * 60);
-                            }
-
-                            @Override
-                            public void fail() {
-
-                            }
-                        }).execute("");
-                    }
-
-                    @Override
-                    public void fail() {
-                    }
-                }).execute("");
             }
 
 
@@ -259,7 +143,7 @@ public class LoginTask extends AsyncTask<String, Void, String> {
 
     public interface LoginCall {
         void success(String s);
-
+        void finish();
         void fail();
     }
 }

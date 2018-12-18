@@ -69,19 +69,10 @@ public class UserInfoTask extends AsyncTask<String, Void, String> {
         user.setStuNum(jsonObject.getString("xh_id"));
         user.setGender(jsonObject.getString("xbm"));
         user.setSchool(jsonObject.getString("jg_id"));
-        user.setMajor(jsonObject.getString("zszyh_id"));
+        user.setMajor(jsonObject.getString("zyh_id"));
         user.setYear(Integer.parseInt(jsonObject.getString("njdm_id")));
         user.save();
-        System.out.println("学号：" + jsonObject.getString("xh_id"));
-        System.out.println("性别：" + jsonObject.getString("xbm"));
-        System.out.println("民族：" + jsonObject.getString("mzm"));
-        System.out.println("学院：" + jsonObject.getString("jg_id"));
-        System.out.println("班级：" + jsonObject.getString("bh_id"));
-        System.out.println("专业：" + jsonObject.getString("zszyh_id"));
-        System.out.println("状态：" + jsonObject.getString("xjztdm"));
-        System.out.println("入学年份：" + jsonObject.getString("njdm_id"));
-        System.out.println("证件号码：" + jsonObject.getString("zjhm"));
-        System.out.println("政治面貌：" + jsonObject.getString("zzmmm"));
+
     }
 
     public interface GetUserInfoCallback {

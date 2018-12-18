@@ -1,6 +1,7 @@
 package com.flyingstudio.cumtfriend.view;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,10 +14,21 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.tu.loadingdialog.LoadingDailog;
+import com.flyingstudio.cumtfriend.MainActivity;
 import com.flyingstudio.cumtfriend.R;
+import com.flyingstudio.cumtfriend.entity.NoDataEntity;
+import com.flyingstudio.cumtfriend.net.ExamTask;
+import com.flyingstudio.cumtfriend.net.GradeTask;
 import com.flyingstudio.cumtfriend.net.LoginTask;
+import com.flyingstudio.cumtfriend.net.ScheduleTask;
+import com.flyingstudio.cumtfriend.net.UserInfoTask;
+import com.flyingstudio.cumtfriend.utils.ACache;
+import com.flyingstudio.cumtfriend.utils.MD5Util;
 import com.flyingstudio.cumtfriend.utils.SPUtil;
 import com.flyingstudio.cumtfriend.utils.UiUtil;
+import com.zhouyou.http.EasyHttp;
+import com.zhouyou.http.callback.SimpleCallBack;
+import com.zhouyou.http.exception.ApiException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -97,15 +109,115 @@ public class LoginActivity extends AppCompatActivity {
 //                }
 //            }).start();
 
-//            LoadingDailog.Builder loadBuilder=new LoadingDailog.Builder(this)
-//                    .setMessage("登录中...")
-//                    .setCancelable(true)
-//                    .setCancelOutside(true);
-//            LoadingDailog dialog=loadBuilder.create();
-//            dialog.show();
+            LoadingDailog.Builder loadBuilder=new LoadingDailog.Builder(this)
+                    .setMessage("登录中...")
+                    .setCancelable(true)
+                    .setCancelOutside(true);
+            LoadingDailog dialog=loadBuilder.create();
+            dialog.show();
 
 
-            new LoginTask(LoginActivity.this, usernameText, pwdText).execute("");
+            new LoginTask(LoginActivity.this, usernameText, pwdText, new LoginTask.LoginCall() {
+                @Override
+                public void success(String s) {
+                    String user = SPUtil.getValue(LoginActivity.this, "username");
+                    // 说明是第一次emmm
+                    if (TextUtils.isEmpty(user)) {
+                        Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_LONG).show();
+                        SPUtil.setValue(LoginActivity.this, "username", usernameText);
+                        SPUtil.setValue(LoginActivity.this, "password", pwdText);
+                        SPUtil.setValue(LoginActivity.this, "JSESSIONID", s);
+                        Log.d("GET TIMETABLE", "onPostExecute: ");
+
+
+                        new UserInfoTask(LoginActivity.this, s, usernameText, new UserInfoTask.GetUserInfoCallback() {
+
+                            @Override
+                            public void success() {
+                                Toast.makeText(LoginActivity.this, "获取用户信息成功", Toast.LENGTH_LONG).show();
+
+                                new ScheduleTask(LoginActivity.this, s, new ScheduleTask.ScheduleTaskFinish() {
+                                    @Override
+                                    public void finish() {
+                                        Toast.makeText(LoginActivity.this, "获取课表成功", Toast.LENGTH_LONG).show();
+                                        new ExamTask(LoginActivity.this, s, usernameText, 2018, 1, new ExamTask.ExamTaskFinish() {
+                                            @Override
+                                            public void finish() {
+                                                new GradeTask(LoginActivity.this, s, usernameText, 2018, 1, new GradeTask.GradeTaskFinish() {
+                                                    @Override
+                                                    public void finish() {
+                                                        Toast.makeText(LoginActivity.this, "获取成绩成功", Toast.LENGTH_LONG).show();
+                                                        ACache cache = ACache.get(LoginActivity.this);
+                                                        cache.put("good", "nice", 24 * 60 * 60);
+                                                        SPUtil.setValue(LoginActivity.this, "target_week", "1");
+                                                        dialog.dismiss();
+
+                                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                        startActivity(intent);
+                                                    }
+
+                                                    @Override
+                                                    public void fail() {
+                                                        Toast.makeText(LoginActivity.this, "获取成绩失败", Toast.LENGTH_LONG).show();
+                                                    }
+                                                }).execute("");
+                                            }
+
+                                            @Override
+                                            public void fail() {
+
+                                            }
+                                        }).execute("");
+                                    }
+
+                                    @Override
+                                    public void fail() {
+                                        Toast.makeText(LoginActivity.this, "获取课表失败", Toast.LENGTH_LONG).show();
+                                    }
+                                }).execute("");
+                            }
+
+                            @Override
+                            public void error() {
+                                Toast.makeText(LoginActivity.this, "获取用户信息失败", Toast.LENGTH_LONG).show();
+                            }
+                        }).execute("");
+
+                    } else {
+                        new ExamTask(LoginActivity.this, s, usernameText, 2018, 1, new ExamTask.ExamTaskFinish() {
+                            @Override
+                            public void finish() {
+                                new GradeTask(LoginActivity.this, s, usernameText, 2018, 1, new GradeTask.GradeTaskFinish() {
+                                    @Override
+                                    public void finish() {
+                                        ACache cache = ACache.get(LoginActivity.this);
+                                        cache.put("good", "nice", 24 * 60 * 60);
+                                    }
+
+                                    @Override
+                                    public void fail() {
+
+                                    }
+                                }).execute("");
+                            }
+
+                            @Override
+                            public void fail() {
+                            }
+                        }).execute("");
+                    }
+                }
+
+                @Override
+                public void finish() {
+                }
+
+                @Override
+                public void fail() {
+
+                }
+            }).execute("");
 
             UiUtil.setImmerseLayout(getWindow());
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)

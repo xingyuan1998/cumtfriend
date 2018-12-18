@@ -270,6 +270,11 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
                             }
 
                             @Override
+                            public void finish(){
+
+                            }
+
+                            @Override
                             public void fail() {
                                 Log.d("LOGIN SUCCESS", "err: ");
                             }
