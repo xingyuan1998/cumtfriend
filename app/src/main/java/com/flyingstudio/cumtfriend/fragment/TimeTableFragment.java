@@ -361,7 +361,7 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
         String showWeeked = SPUtil.getValue(getContext(), "showWeeked");
         String showTime = SPUtil.getValue(getContext(), "showTime");
         if (TextUtils.isEmpty(showTime)){SPUtil.setValue(getContext(), "showTime", "false");showTime = "false";}
-        if (TextUtils.isEmpty(showWeeked)) {SPUtil.setValue(getContext(), "showWeeked", "false");showWeeked = "false";}
+        if (TextUtils.isEmpty(showWeeked)) {SPUtil.setValue(getContext(), "showWeeked", "true");showWeeked = "true";}
         if (TextUtils.isEmpty(showWeek)) {SPUtil.setValue(getContext(), "showWeek","false");showWeek = "false";}
 
 

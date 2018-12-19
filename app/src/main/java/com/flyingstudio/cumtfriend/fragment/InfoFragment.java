@@ -25,6 +25,7 @@ import com.flyingstudio.cumtfriend.entity.Record;
 import com.flyingstudio.cumtfriend.entity.RecordData;
 import com.flyingstudio.cumtfriend.net.Constant;
 import com.flyingstudio.cumtfriend.net.ExamTask;
+import com.flyingstudio.cumtfriend.net.GradeTask;
 import com.flyingstudio.cumtfriend.net.LoginTask;
 import com.flyingstudio.cumtfriend.utils.ACache;
 import com.flyingstudio.cumtfriend.utils.SPUtil;
@@ -110,7 +111,43 @@ public class InfoFragment extends Fragment {
         String stuNum = SPUtil.getValue(getContext(), "username");
         String password = SPUtil.getValue(getContext(), "password");
         if (TextUtils.isEmpty(good)) {
-            new LoginTask(getContext(), stuNum, password).execute();
+            new LoginTask(getContext(), stuNum, password, new LoginTask.LoginCall() {
+                @Override
+                public void success(String s) {
+                    new ExamTask(getContext(), s, stuNum, 2018, 1, new ExamTask.ExamTaskFinish() {
+                        @Override
+                        public void finish() {
+                            new GradeTask(getContext(), s, stuNum, 2018, 1, new GradeTask.GradeTaskFinish() {
+                                @Override
+                                public void finish() {
+                                    ACache cache = ACache.get(getContext());
+                                    cache.put("good", "nice", 8 * 60 * 60);
+//                                    cache.put("good", "nice", 60);
+                                }
+
+                                @Override
+                                public void fail() {
+
+                                }
+                            }).execute("");
+                        }
+
+                        @Override
+                        public void fail() {
+                        }
+                    }).execute("");
+                }
+
+                @Override
+                public void finish() {
+
+                }
+
+                @Override
+                public void fail() {
+
+                }
+            }).execute();
         }
 
         exams = LitePal.findAll(Exam.class);

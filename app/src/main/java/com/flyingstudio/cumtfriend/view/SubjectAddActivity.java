@@ -80,6 +80,8 @@ public class SubjectAddActivity extends AppCompatActivity {
             weekChoose[i] = false;
         }
 
+        daySec --;
+        startSec --;
 
         weekChoose[Integer.parseInt(weekNow)] = true;
         subjectWeek.setText("第" + (Integer.parseInt(weekNow) + 1) + "周");
@@ -134,7 +136,7 @@ public class SubjectAddActivity extends AppCompatActivity {
             for (int i = 1; i < 13; i++) {
                 days.add("第" + i + "节");
             }
-            wheelViewWeek.setSelection(daySec - 1);
+            wheelViewWeek.setSelection(daySec);
             wheelViewWeek.setOnWheelItemSelectedListener(new WheelView.OnWheelItemSelectedListener() {
                 @Override
                 public void onItemSelected(int position, Object o) {
@@ -147,7 +149,7 @@ public class SubjectAddActivity extends AppCompatActivity {
             wheelViewStart.setWheelData(days);
             wheelViewStart.setSkin(WheelView.Skin.Holo);
             wheelViewStart.setLoop(true);
-            wheelViewStart.setSelection(startSec - 1);
+            wheelViewStart.setSelection(startSec);
 
             wheelViewStart.setOnWheelItemSelectedListener(new WheelView.OnWheelItemSelectedListener() {
                 @Override
@@ -216,6 +218,7 @@ public class SubjectAddActivity extends AppCompatActivity {
             subject.save();
             Toast.makeText(this, "添加成功", Toast.LENGTH_LONG).show();
             Intent i = new Intent(this, MainActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
 
         });

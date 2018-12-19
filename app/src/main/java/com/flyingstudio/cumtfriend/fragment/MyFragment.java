@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +15,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.flyingstudio.cumtfriend.MainActivity;
 import com.flyingstudio.cumtfriend.R;
 import com.flyingstudio.cumtfriend.entity.Exam;
 import com.flyingstudio.cumtfriend.entity.Record;
 import com.flyingstudio.cumtfriend.entity.Subject;
 import com.flyingstudio.cumtfriend.entity.User;
+import com.flyingstudio.cumtfriend.net.LoginTask;
+import com.flyingstudio.cumtfriend.net.UserInfoTask;
 import com.flyingstudio.cumtfriend.utils.SPUtil;
 import com.flyingstudio.cumtfriend.utils.UiUtil;
 import com.flyingstudio.cumtfriend.view.LoginActivity;
@@ -75,7 +80,7 @@ public class MyFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initView();
-        
+
     }
 
     private void initView() {
@@ -86,17 +91,41 @@ public class MyFragment extends Fragment {
         TextView school = getView().findViewById(R.id.school);
         TextView major = getView().findViewById(R.id.major);
         TextView stuNum = getView().findViewById(R.id.stuNum);
-        if(users.size() != 0){
+        if (users.size() != 0) {
             User user = users.get(0);
             name.setText(user.getName());
             gender.setText(user.getGender());
             school.setText(user.getSchool());
             major.setText(user.getMajor());
             stuNum.setText(user.getStuNum());
+        } else {
+            String username = SPUtil.getValue(getContext(), "username");
+            String password = SPUtil.getValue(getContext(), "passsword");
+            if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
+                Toast.makeText(getContext(), "获取用户信息失败", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getContext(), LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            } else {
+                new LoginTask(getContext(), username, password, new LoginTask.LoginCall() {
+                    @Override
+                    public void success(String s) {
+                        new UserInfoTask(getContext(), s, username).execute();
+                    }
+
+                    @Override
+                    public void finish() {
+
+                    }
+
+                    @Override
+                    public void fail() {
+
+                    }
+                }).execute();
+            }
+
         }
-
-
-
 
 
         Button exit = getView().findViewById(R.id.exit);
