@@ -108,7 +108,7 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
     private void initView() {
         // 获取当前周
         String target_week = SPUtil.getValue(getContext(), "target_week");
-        if (target_week == null) target = -1;
+        if (target_week == null) target = 1;
         else target = Integer.parseInt(target_week) + 1;
 
 
@@ -140,6 +140,8 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
 //        mySubjects = SubjectRepertory.loadDefaultSubjects2();
 //        mySubjects.addAll(SubjectRepertory.loadDefaultSubjects());
         titleTextView = getView().findViewById(R.id.id_title);
+        titleTextView.setText("第" + target + "周");
+
         layout = getView().findViewById(R.id.id_layout);
         layout.setOnClickListener(this);
 //        initTimetableView();
@@ -419,6 +421,8 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
                     @Override
                     public void onWeekChanged(int curWeek) {
 //                        titleTextView.setText("第" + curWeek + "周");
+                        if (titleTextView == null)titleTextView = getView().findViewById(R.id.id_title);
+                        titleTextView.setText("第" + curWeek + "周");
                     }
                 })
                 //旗标布局点击监听

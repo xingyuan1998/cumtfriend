@@ -22,6 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="选择周次"
+            android:id="@+id/choose_week"
             android:textColor="@color/app_gray"
             android:textSize="10sp" />
     </LinearLayout>
