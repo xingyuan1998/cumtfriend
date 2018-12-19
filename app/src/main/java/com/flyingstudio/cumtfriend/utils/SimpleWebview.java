@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.AttributeSet;
 
+import com.flyingstudio.cumtfriend.view.WebViewActivity;
 import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 
 public class SimpleWebview extends com.tencent.smtt.sdk.WebView {
+    private Context context;
 
     public SimpleWebview(Context context) {
         super(context);
@@ -61,6 +63,16 @@ public class SimpleWebview extends com.tencent.smtt.sdk.WebView {
         });
     }
 
+    @Override
+    public void loadUrl(String s) {
+        super.loadUrl(s);
+        com.tencent.smtt.sdk.CookieManager webCookieManager = com.tencent.smtt.sdk.CookieManager.getInstance();
+        webCookieManager.setAcceptCookie(true);
+        String cookie = SPUtil.getValue(getContext(), "JSESSIONID");
+        webCookieManager.setCookie("jwxt.cumt.edu.cn", "JSESSIONID=" + cookie);
+        com.tencent.smtt.sdk.CookieSyncManager.createInstance(getContext()).sync();
+    }
+
     public static class SimpleWebViewClient extends com.tencent.smtt.sdk.WebViewClient {
         private Context context;
         public SimpleWebViewClient(Context context) {
@@ -85,12 +97,6 @@ public class SimpleWebview extends com.tencent.smtt.sdk.WebView {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     context.startActivity(intent);
                     return true;
-                }else if (adClick != null){
-                    if (!url.startsWith("http://jiexi.m52k.cn")){
-                        adClick.click();
-                        return false;
-                    }
-                    return false;
                 }
             } catch (Exception e) {//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
                 return true;//没有安装该app时，返回true，表示拦截自定义链接，但不跳转，避免弹出上面的错误页面
@@ -101,6 +107,8 @@ public class SimpleWebview extends com.tencent.smtt.sdk.WebView {
             webView.loadUrl(url);
             return true;
         }
+
+
         public interface ADClick{
             void click();
         }
