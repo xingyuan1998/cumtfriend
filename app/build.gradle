@@ -6,8 +6,8 @@ android {
         applicationId "com.flyingstudio.cumtfriend"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 2
-        versionName "1.1.0"
+        versionCode 4
+        versionName "1.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk { abiFilters "armeabi" }
         javaCompileOptions { annotationProcessorOptions { includeCompileClasspath = true } }
