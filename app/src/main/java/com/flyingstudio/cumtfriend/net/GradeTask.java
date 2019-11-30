@@ -71,11 +71,13 @@ public class GradeTask extends AsyncTask<String, Void, String> {
         datas.put("queryModel.sortName", "");
         datas.put("time", "0");
 
-        connection = Jsoup.connect(url + "/jwglxt/cjcx/cjcx_cxDgXscj.html?gnmkdm=N305005&layout=default&su=" + stuNum);
-        connection.header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:29.0) Gecko/20100101 Firefox/29.0");
-        response = connection.cookies(cookies).method(Connection.Method.POST)
-                .data(datas).ignoreContentType(true).execute();
+//        connection = Jsoup.connect(url + "/jwglxt/cjcx/cjcx_cxDgXscj.html?gnmkdm=N305005&layout=default&su=" + stuNum);
+//        connection.header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:29.0) Gecko/20100101 Firefox/29.0");
+//        response = connection.cookies(cookies).method(Connection.Method.POST)
+//                .data(datas).ignoreContentType(true).execute();
         connection = Jsoup.connect(url + "/jwglxt/cjcx/cjcx_cxDgXscj.html?doType=query&gnmkdm=N305005");
+        connection.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
+
         connection.header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:29.0) Gecko/20100101 Firefox/29.0");
         response = connection.cookies(cookies).method(Connection.Method.POST)
                 .data(datas).ignoreContentType(true).execute();

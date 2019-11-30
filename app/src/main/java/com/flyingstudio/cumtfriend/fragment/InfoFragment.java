@@ -29,6 +29,7 @@ import com.flyingstudio.cumtfriend.net.GradeTask;
 import com.flyingstudio.cumtfriend.net.LoginTask;
 import com.flyingstudio.cumtfriend.utils.ACache;
 import com.flyingstudio.cumtfriend.utils.SPUtil;
+import com.flyingstudio.cumtfriend.utils.TimeUtil;
 import com.flyingstudio.cumtfriend.view.LoginActivity;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.cache.model.CacheMode;
@@ -37,6 +38,10 @@ import com.zhouyou.http.exception.ApiException;
 
 import org.litepal.LitePal;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -89,10 +94,14 @@ public class InfoFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         token = SPUtil.getValue(getContext(), "token");
         if (TextUtils.isEmpty(token)) Log.d("TOKEN IS NONE", "onActivityCreated: ");
-        initView();
+        try {
+            initView();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void initView() {
+    private void initView() throws ParseException {
         cache = ACache.get(getContext());
         examRecyclerView = getView().findViewById(R.id.exam_rec);
         examRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayout.VERTICAL, false));
@@ -106,7 +115,7 @@ public class InfoFragment extends Fragment {
 //        getRecords();
     }
 
-    private void getData() {
+    private void getData() throws ParseException {
         String good = cache.getAsString("good");
         String stuNum = SPUtil.getValue(getContext(), "username");
         String password = SPUtil.getValue(getContext(), "password");
@@ -114,28 +123,8 @@ public class InfoFragment extends Fragment {
             new LoginTask(getContext(), stuNum, password, new LoginTask.LoginCall() {
                 @Override
                 public void success(String s) {
-                    new ExamTask(getContext(), s, stuNum, 2018, 1, new ExamTask.ExamTaskFinish() {
-                        @Override
-                        public void finish() {
-                            new GradeTask(getContext(), s, stuNum, 2018, 1, new GradeTask.GradeTaskFinish() {
-                                @Override
-                                public void finish() {
-                                    ACache cache = ACache.get(getContext());
-                                    cache.put("good", "nice", 8 * 60 * 60);
-//                                    cache.put("good", "nice", 60);
-                                }
-
-                                @Override
-                                public void fail() {
-
-                                }
-                            }).execute("");
-                        }
-
-                        @Override
-                        public void fail() {
-                        }
-                    }).execute("");
+                    ACache cache = ACache.get(getContext());
+                    cache.put("good", "nice", 8 * 60 * 60);
                 }
 
                 @Override
@@ -151,10 +140,16 @@ public class InfoFragment extends Fragment {
         }
 
         exams = LitePal.findAll(Exam.class);
-        if (exams.size() != 0) examBlank.setVisibility(View.GONE);
-        if (exams != null) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        List<Exam> examTmp = new ArrayList<>();
+        for (Exam exam:exams){
+            long day = TimeUtil.getTimeDay(new Date(), format.parse(exam.getTime()));
+            if (day > 0)examTmp.add(exam);
+        }
+        if (examTmp.size() != 0) examBlank.setVisibility(View.GONE);
+        if (examTmp != null) {
             if (examAdapter == null) {
-                examAdapter = new ExamRecAdapter(exams, getContext());
+                examAdapter = new ExamRecAdapter(examTmp, getContext());
                 examRecyclerView.setAdapter(examAdapter);
             } else {
                 examAdapter.notifyDataSetChanged();
@@ -171,109 +166,6 @@ public class InfoFragment extends Fragment {
             recordRecAdapter.notifyDataSetChanged();
         }
 
-
-//        String exam_is_validate = cache.getAsString("exam");
-//        String record_is_validate = cache.getAsString("record");
-//        if (!TextUtils.isEmpty(exam_is_validate)) {
-//            exams = LitePal.findAll(Exam.class);
-//            if (exams.size() != 0) examBlank.setVisibility(View.GONE);
-//            if (exams != null) {
-//                if (examAdapter == null) {
-//                    examAdapter = new ExamRecAdapter(exams, getContext());
-//                    examRecyclerView.setAdapter(examAdapter);
-//                } else {
-//                    examAdapter.notifyDataSetChanged();
-//                }
-//            }
-//        } else {
-//            getExamFormInternet();
-//        }
-//
-//        if (!TextUtils.isEmpty(record_is_validate)) {
-//            records = LitePal.findAll(Record.class);
-//            if (records.size() != 0)
-//                recordBlank.setVisibility(View.GONE);
-//            if (recordRecAdapter == null) {
-//                recordRecAdapter = new RecordRecAdapter(records, getContext());
-//                recordRecyclerView.setAdapter(recordRecAdapter);
-//            } else {
-//                recordRecAdapter.notifyDataSetChanged();
-//            }
-//        } else getRecordFormInternet();
-    }
-
-    private void getRecordFormInternet() {
-
-        EasyHttp.get(Constant.GET_RECORDS)
-                .baseUrl(Constant.BASE_URL)
-                .headers("token", token)
-                .cacheTime(24 * 60 * 60 * 1000)
-                .cacheKey("record_item")
-                .cacheMode(CacheMode.CACHEANDREMOTE)
-                .execute(new SimpleCallBack<RecordData>() {
-                    @Override
-                    public void onError(ApiException e) {
-                        Log.e("GET_RECORD", "onError: " + e.getMessage());
-                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-//                        if (e.getCode() == 4000) {
-//                            Intent intent = new Intent(getContext(), LoginActivity.class);
-//                            startActivity(intent);
-//                        }
-                    }
-
-                    @Override
-                    public void onSuccess(RecordData recordData) {
-                        if (recordData.getRecords().size() != 0)
-                            recordBlank.setVisibility(View.GONE);
-                        if (recordRecAdapter == null) {
-
-                            recordRecAdapter = new RecordRecAdapter(recordData.getRecords(), getContext());
-                            recordRecyclerView.setAdapter(recordRecAdapter);
-                        } else {
-                            recordRecAdapter.notifyDataSetChanged();
-                        }
-                        LitePal.deleteAll(Record.class);
-                        for (Record record : recordData.getRecords()) {
-                            record.save();
-                        }
-                        cache.put("record", "true", 24 * 60 * 60);
-                    }
-                });
-    }
-
-    private void getExamFormInternet() {
-        EasyHttp.get(Constant.GET_EXAMS)
-                .baseUrl(Constant.BASE_URL)
-                .headers("token", token)
-                .execute(new SimpleCallBack<ExamData>() {
-                    @Override
-                    public void onError(ApiException e) {
-                        Log.e("GET_EXAM", "onError: " + e.getMessage());
-                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onSuccess(ExamData examData) {
-//                        Log.d("GET_EXAM", "onSuccess: " + examData.getExams().size());
-
-                        if (examData.getExams().size() != 0) examBlank.setVisibility(View.GONE);
-                        if (examData != null) {
-
-                            exams = examData.getExams();
-                            if (examAdapter == null) {
-                                examAdapter = new ExamRecAdapter(exams, getContext());
-                                examRecyclerView.setAdapter(examAdapter);
-                            } else {
-                                examAdapter.notifyDataSetChanged();
-                            }
-                            cache.put("exam", "true", 24 * 60 * 60);
-                            LitePal.deleteAll(Exam.class);
-                            for (Exam exam : exams) {
-                                exam.save();
-                            }
-                        }
-                    }
-                });
     }
 
     @Override

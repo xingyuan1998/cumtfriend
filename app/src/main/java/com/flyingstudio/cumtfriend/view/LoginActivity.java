@@ -136,47 +136,50 @@ public class LoginActivity extends AppCompatActivity {
                         public void success() {
                             Toast.makeText(LoginActivity.this, "获取用户信息成功", Toast.LENGTH_LONG).show();
 
-                            new ScheduleTask(LoginActivity.this, s, new ScheduleTask.ScheduleTaskFinish() {
-                                @Override
-                                public void finish() {
-                                    Toast.makeText(LoginActivity.this, "获取课表成功", Toast.LENGTH_LONG).show();
-                                    new ExamTask(LoginActivity.this, s, usernameText, 2018, 1, new ExamTask.ExamTaskFinish() {
-                                        @Override
-                                        public void finish() {
-                                            new GradeTask(LoginActivity.this, s, usernameText, 2018, 1, new GradeTask.GradeTaskFinish() {
-                                                @Override
-                                                public void finish() {
-                                                    Toast.makeText(LoginActivity.this, "获取成绩成功", Toast.LENGTH_LONG).show();
-                                                    ACache cache = ACache.get(LoginActivity.this);
-                                                    cache.put("good", "nice", 8 * 60 * 60);
+
+                            Toast.makeText(LoginActivity.this, "获取成绩成功", Toast.LENGTH_LONG).show();
+                            ACache cache = ACache.get(LoginActivity.this);
+                            cache.put("good", "nice", 8 * 60 * 60);
 //                                                    cache.put("good", "nice",  60);
-                                                    SPUtil.setValue(LoginActivity.this, "target_week", "1");
-                                                    dialog.dismiss();
+                            SPUtil.setValue(LoginActivity.this, "target_week", "1");
+                            dialog.dismiss();
 
-                                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                    startActivity(intent);
-                                                }
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
 
-                                                @Override
-                                                public void fail() {
-                                                    Toast.makeText(LoginActivity.this, "获取成绩失败", Toast.LENGTH_LONG).show();
-                                                }
-                                            }).execute("");
-                                        }
-
-                                        @Override
-                                        public void fail() {
-
-                                        }
-                                    }).execute("");
-                                }
-
-                                @Override
-                                public void fail() {
-                                    Toast.makeText(LoginActivity.this, "获取课表失败", Toast.LENGTH_LONG).show();
-                                }
-                            }).execute("");
+//                            new ScheduleTask(LoginActivity.this, s, new ScheduleTask.ScheduleTaskFinish() {
+//                                @Override
+//                                public void finish() {
+//                                    Toast.makeText(LoginActivity.this, "获取课表成功", Toast.LENGTH_LONG).show();
+//                                    new ExamTask(LoginActivity.this, s, usernameText, 2018, 1, new ExamTask.ExamTaskFinish() {
+//                                        @Override
+//                                        public void finish() {
+//                                            new GradeTask(LoginActivity.this, s, usernameText, 2018, 1, new GradeTask.GradeTaskFinish() {
+//                                                @Override
+//                                                public void finish() {
+//
+//                                                }
+//
+//                                                @Override
+//                                                public void fail() {
+//                                                    Toast.makeText(LoginActivity.this, "获取成绩失败", Toast.LENGTH_LONG).show();
+//                                                }
+//                                            }).execute("");
+//                                        }
+//
+//                                        @Override
+//                                        public void fail() {
+//
+//                                        }
+//                                    }).execute("");
+//                                }
+//
+//                                @Override
+//                                public void fail() {
+//                                    Toast.makeText(LoginActivity.this, "获取课表失败", Toast.LENGTH_LONG).show();
+//                                }
+//                            }).execute("");
                         }
 
                         @Override

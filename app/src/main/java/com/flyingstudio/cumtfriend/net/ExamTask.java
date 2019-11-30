@@ -63,6 +63,8 @@ public class ExamTask extends AsyncTask<String, Void, String> {
         datas.put("time", "0");
         connection = Jsoup.connect(url + "/jwglxt/kwgl/kscx_cxXsksxxIndex.html?doType=query&gnmkdm=N358105");
         connection.header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:29.0) Gecko/20100101 Firefox/29.0");
+        connection.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
+
         response = connection.cookies(cookies).method(Connection.Method.POST)
                 .data(datas).ignoreContentType(true).execute();
         JSONObject jsonObject = new JSONObject(response.body());

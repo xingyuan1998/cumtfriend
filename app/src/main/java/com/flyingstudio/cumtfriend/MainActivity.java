@@ -31,7 +31,6 @@ import com.flyingstudio.cumtfriend.utils.SPUtil;
 import com.flyingstudio.cumtfriend.utils.UiUtil;
 import com.flyingstudio.cumtfriend.utils.VersionUtil;
 import com.flyingstudio.cumtfriend.view.LoginActivity;
-import com.umeng.analytics.MobclickAgent;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.cache.model.CacheMode;
 import com.zhouyou.http.callback.DownloadProgressCallBack;
@@ -239,11 +238,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        MobclickAgent.onResume(this);
     }
     @Override
     public void onPause() {
         super.onPause();
-        MobclickAgent.onPause(this);
     }
 }
