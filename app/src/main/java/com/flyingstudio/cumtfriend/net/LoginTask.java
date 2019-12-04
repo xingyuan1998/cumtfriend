@@ -53,6 +53,8 @@ public class LoginTask extends AsyncTask<String, Void, String> {
     private Document document;
     private String pwdForward;
     private LoginCall loginCall;
+    private int year;
+    private int term;
 
     public LoginTask(Context context, String stuNum, String password) {
         this.context = context;
@@ -60,11 +62,13 @@ public class LoginTask extends AsyncTask<String, Void, String> {
         this.pwdForward = password;
     }
 
-    public LoginTask(Context context, String stuNum, String password, LoginCall call) {
+    public LoginTask(Context context, String stuNum, String password, int year, int term, LoginCall call) {
         this.context = context;
         this.stuNum = stuNum;
         this.pwdForward = password;
         this.loginCall = call;
+        this.year = year;
+        this.term = term;
     }
 
     @Override
@@ -128,11 +132,9 @@ public class LoginTask extends AsyncTask<String, Void, String> {
             Log.d("LOGIN", "beginLogin: " + cookies);
             String ss = cookies.get("JSESSIONID");
             getStudentInformaction(cookies);
-            getStudentExam(cookies, 2019, 1);
-            getStudentGrade(cookies, 2019, 1);
-            getStudentTimetable(cookies, 2019, 1);
-
-
+            getStudentExam(cookies, this.year, this.term);
+            getStudentGrade(cookies, this.year, this.term);
+            getStudentTimetable(cookies, this.year, this.term);
             return ss;
         } else {
             System.out.println(document.getElementById("tips").text());
@@ -157,7 +159,7 @@ public class LoginTask extends AsyncTask<String, Void, String> {
         }
     }
 
-    public void getStudentInformaction(Map<String, String>cookies) throws Exception {
+    public void getStudentInformaction(Map<String, String> cookies) throws Exception {
         connection = Jsoup.connect(url + "/jwglxt/xsxxxggl/xsxxwh_cxCkDgxsxx.html?gnmkdm=N100801&su=" + stuNum);
 //            connection.header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
         connection.header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:29.0) Gecko/20100101 Firefox/29.0");
@@ -177,7 +179,7 @@ public class LoginTask extends AsyncTask<String, Void, String> {
 
     }
 
-    public void getStudentExam(Map<String, String>cookies, int year, int term) throws Exception {
+    public void getStudentExam(Map<String, String> cookies, int year, int term) throws Exception {
         Map<String, String> datas = new HashMap<>();
         datas.put("xnm", String.valueOf(year));
         datas.put("xqm", String.valueOf(term * term * 3));
@@ -211,7 +213,7 @@ public class LoginTask extends AsyncTask<String, Void, String> {
     }
 
 
-    public void getStudentGrade(Map<String, String>cookies, int year, int term) throws Exception {
+    public void getStudentGrade(Map<String, String> cookies, int year, int term) throws Exception {
         Map<String, String> datas = new HashMap<>();
         datas.put("xnm", String.valueOf(year));
         datas.put("xqm", String.valueOf(term * term * 3));
@@ -251,7 +253,7 @@ public class LoginTask extends AsyncTask<String, Void, String> {
         }
     }
 
-    public void getStudentTimetable(Map<String, String>cookies, int year, int term) throws Exception {
+    public void getStudentTimetable(Map<String, String> cookies, int year, int term) throws Exception {
         connection = Jsoup.connect(url + "/jwglxt/kbcx/xskbcx_cxXsKb.html?gnmkdm=N2151");
         connection.header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:29.0) Gecko/20100101 Firefox/29.0");
         connection.data("xnm", String.valueOf(year));
@@ -320,7 +322,9 @@ public class LoginTask extends AsyncTask<String, Void, String> {
 
     public interface LoginCall {
         void success(String s);
+
         void finish();
+
         void fail();
     }
 }

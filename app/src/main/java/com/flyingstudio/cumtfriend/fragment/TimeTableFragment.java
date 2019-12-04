@@ -21,13 +21,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.flyingstudio.cumtfriend.MainActivity;
 import com.flyingstudio.cumtfriend.R;
 import com.flyingstudio.cumtfriend.adapter.SubjectDetailAdapter;
 import com.flyingstudio.cumtfriend.entity.Subject;
 import com.flyingstudio.cumtfriend.entity.SubjectData;
+import com.flyingstudio.cumtfriend.entity.SystemConfig;
 import com.flyingstudio.cumtfriend.net.Constant;
 import com.flyingstudio.cumtfriend.net.LoginTask;
 import com.flyingstudio.cumtfriend.net.ScheduleTask;
+import com.flyingstudio.cumtfriend.utils.ACache;
 import com.flyingstudio.cumtfriend.utils.SPUtil;
 import com.flyingstudio.cumtfriend.view.LoginActivity;
 import com.flyingstudio.cumtfriend.view.SubjectAddActivity;
@@ -35,6 +38,7 @@ import com.flyingstudio.cumtfriend.view.SubjectDetailActivity;
 import com.google.gson.Gson;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.cache.model.CacheMode;
+import com.zhouyou.http.callback.CallBack;
 import com.zhouyou.http.callback.SimpleCallBack;
 import com.zhouyou.http.exception.ApiException;
 import com.zhuangfei.timetable.TimetableView;
@@ -252,35 +256,63 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
                         String stuNum = SPUtil.getValue(getContext(), "username");
                         String password = SPUtil.getValue(getContext(), "password");
                         Log.d("REIMPORT TIMETABLE", "onMenuItemClick: " + stuNum + password);
-                        new LoginTask(getContext(), stuNum, password, new LoginTask.LoginCall() {
-                            @Override
-                            public void success(String cookie) {
-                                Log.d("LOGIN SUCCESS", "success: " + cookie);
-                                new ScheduleTask(getContext(), cookie, new ScheduleTask.ScheduleTaskFinish() {
+
+                        EasyHttp.get("system")
+                                .baseUrl(Constant.BASE_URL)
+                                .readTimeOut(30 * 1000)
+                                .execute(new CallBack<SystemConfig>() {
                                     @Override
-                                    public void finish() {
-                                        Log.d("REIMPORT Schedule", "finish: ");
-                                        Toast.makeText(getContext(), "重新导入课表成功", Toast.LENGTH_LONG).show();
-                                        mTimetableView.updateDateView();
+                                    public void onStart() {
+
                                     }
 
                                     @Override
-                                    public void fail() {
-                                        Toast.makeText(getContext(), "重新导入课表失败", Toast.LENGTH_LONG).show();
+                                    public void onCompleted() {
+
                                     }
-                                }).execute("");
-                            }
 
-                            @Override
-                            public void finish(){
+                                    @Override
+                                    public void onError(ApiException e) {
+                                        Log.e("LOGIN_ERROR", "onError: " + e.getCode());
+                                    }
 
-                            }
+                                    @Override
+                                    public void onSuccess(SystemConfig systemConfig) {
+                                        Log.d("EASY_HTTP", "onSuccess: " + systemConfig.getOpen());
 
-                            @Override
-                            public void fail() {
-                                Log.d("LOGIN SUCCESS", "err: ");
-                            }
-                        }).execute("");
+                                        new LoginTask(getContext(), stuNum, password, systemConfig.getYear(), systemConfig.getTerm(), new LoginTask.LoginCall() {
+                                            @Override
+                                            public void success(String cookie) {
+                                                Log.d("LOGIN SUCCESS", "success: " + cookie);
+                                                new ScheduleTask(getContext(), cookie, new ScheduleTask.ScheduleTaskFinish() {
+                                                    @Override
+                                                    public void finish() {
+                                                        Log.d("REIMPORT Schedule", "finish: ");
+                                                        Toast.makeText(getContext(), "重新导入课表成功", Toast.LENGTH_LONG).show();
+                                                        mTimetableView.updateDateView();
+                                                    }
+
+                                                    @Override
+                                                    public void fail() {
+                                                        Toast.makeText(getContext(), "重新导入课表失败", Toast.LENGTH_LONG).show();
+                                                    }
+                                                }).execute("");
+                                            }
+
+                                            @Override
+                                            public void finish() {
+
+                                            }
+
+                                            @Override
+                                            public void fail() {
+                                                Log.d("LOGIN SUCCESS", "err: ");
+                                            }
+                                        }).execute("");
+
+                                    }
+                                });
+
                         break;
 
                     default:
@@ -362,9 +394,18 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
         String showWeek = SPUtil.getValue(getContext(), "showWeek");
         String showWeeked = SPUtil.getValue(getContext(), "showWeeked");
         String showTime = SPUtil.getValue(getContext(), "showTime");
-        if (TextUtils.isEmpty(showTime)){SPUtil.setValue(getContext(), "showTime", "false");showTime = "false";}
-        if (TextUtils.isEmpty(showWeeked)) {SPUtil.setValue(getContext(), "showWeeked", "true");showWeeked = "true";}
-        if (TextUtils.isEmpty(showWeek)) {SPUtil.setValue(getContext(), "showWeek","false");showWeek = "false";}
+        if (TextUtils.isEmpty(showTime)) {
+            SPUtil.setValue(getContext(), "showTime", "false");
+            showTime = "false";
+        }
+        if (TextUtils.isEmpty(showWeeked)) {
+            SPUtil.setValue(getContext(), "showWeeked", "true");
+            showWeeked = "true";
+        }
+        if (TextUtils.isEmpty(showWeek)) {
+            SPUtil.setValue(getContext(), "showWeek", "false");
+            showWeek = "false";
+        }
 
 
         //设置周次选择属性
@@ -421,7 +462,8 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
                     @Override
                     public void onWeekChanged(int curWeek) {
 //                        titleTextView.setText("第" + curWeek + "周");
-                        if (titleTextView == null)titleTextView = getView().findViewById(R.id.id_title);
+                        if (titleTextView == null)
+                            titleTextView = getView().findViewById(R.id.id_title);
                         titleTextView.setText("第" + curWeek + "周");
                     }
                 })
@@ -444,14 +486,14 @@ public class TimeTableFragment extends Fragment implements View.OnClickListener 
                 .showView();
 
 
-                if (showWeeked.equals("false"))hideWeekends();
-                else showWeekends();
+        if (showWeeked.equals("false")) hideWeekends();
+        else showWeekends();
 
-                if (showTime.equals("false")) hideTime();
-                else showTime();
+        if (showTime.equals("false")) hideTime();
+        else showTime();
 
-                if (showWeek.equals("false"))hideNonThisWeek();
-                else showNonThisWeek();
+        if (showWeek.equals("false")) hideNonThisWeek();
+        else showNonThisWeek();
 
 
     }

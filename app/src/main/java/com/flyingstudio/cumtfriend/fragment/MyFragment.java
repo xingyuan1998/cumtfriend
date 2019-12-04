@@ -20,12 +20,18 @@ import com.flyingstudio.cumtfriend.R;
 import com.flyingstudio.cumtfriend.entity.Exam;
 import com.flyingstudio.cumtfriend.entity.Record;
 import com.flyingstudio.cumtfriend.entity.Subject;
+import com.flyingstudio.cumtfriend.entity.SystemConfig;
 import com.flyingstudio.cumtfriend.entity.User;
+import com.flyingstudio.cumtfriend.net.Constant;
 import com.flyingstudio.cumtfriend.net.LoginTask;
 import com.flyingstudio.cumtfriend.net.UserInfoTask;
+import com.flyingstudio.cumtfriend.utils.ACache;
 import com.flyingstudio.cumtfriend.utils.SPUtil;
 import com.flyingstudio.cumtfriend.utils.UiUtil;
 import com.flyingstudio.cumtfriend.view.LoginActivity;
+import com.zhouyou.http.EasyHttp;
+import com.zhouyou.http.callback.CallBack;
+import com.zhouyou.http.exception.ApiException;
 
 import org.litepal.LitePal;
 
@@ -107,22 +113,50 @@ public class MyFragment extends Fragment {
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             } else {
-                new LoginTask(getContext(), username, password, new LoginTask.LoginCall() {
-                    @Override
-                    public void success(String s) {
-                        new UserInfoTask(getContext(), s, username).execute();
-                    }
+                EasyHttp.get("system")
+                        .baseUrl(Constant.BASE_URL)
+                        .readTimeOut(30 * 1000)
+                        .execute(new CallBack<SystemConfig>() {
+                            @Override
+                            public void onStart() {
 
-                    @Override
-                    public void finish() {
+                            }
 
-                    }
+                            @Override
+                            public void onCompleted() {
 
-                    @Override
-                    public void fail() {
+                            }
 
-                    }
-                }).execute();
+                            @Override
+                            public void onError(ApiException e) {
+                                Log.e("LOGIN_ERROR", "onError: " + e.getCode());
+                            }
+
+                            @Override
+                            public void onSuccess(SystemConfig systemConfig) {
+                                Log.d("EASY_HTTP", "onSuccess: " + systemConfig.getOpen());
+
+                                new LoginTask(getContext(), username, password, systemConfig.getYear(), systemConfig.getTerm(), new LoginTask.LoginCall() {
+                                            @Override
+                                            public void success(String s) {
+                                                new UserInfoTask(getContext(), s, username).execute();
+                                            }
+
+                                            @Override
+                                            public void finish() {
+
+                                            }
+
+                                            @Override
+                                            public void fail() {
+
+                                            }
+                                        }).execute();
+
+                            }
+                        });
+
+
             }
 
         }

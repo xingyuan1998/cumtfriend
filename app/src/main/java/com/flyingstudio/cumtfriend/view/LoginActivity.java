@@ -17,6 +17,8 @@ import com.android.tu.loadingdialog.LoadingDailog;
 import com.flyingstudio.cumtfriend.MainActivity;
 import com.flyingstudio.cumtfriend.R;
 import com.flyingstudio.cumtfriend.entity.NoDataEntity;
+import com.flyingstudio.cumtfriend.entity.SystemConfig;
+import com.flyingstudio.cumtfriend.net.Constant;
 import com.flyingstudio.cumtfriend.net.ExamTask;
 import com.flyingstudio.cumtfriend.net.GradeTask;
 import com.flyingstudio.cumtfriend.net.LoginTask;
@@ -27,9 +29,13 @@ import com.flyingstudio.cumtfriend.utils.MD5Util;
 import com.flyingstudio.cumtfriend.utils.SPUtil;
 import com.flyingstudio.cumtfriend.utils.UiUtil;
 import com.zhouyou.http.EasyHttp;
+import com.zhouyou.http.callback.CallBack;
 import com.zhouyou.http.callback.SimpleCallBack;
 import com.zhouyou.http.exception.ApiException;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,9 +48,9 @@ public class LoginActivity extends AppCompatActivity {
 //            switch (msg.what) {
 //                // 成功
 //                case 1:
-//                    System.out.println("handleMessage thread id " + Thread.currentThread().getId());
+//                    SystemConfig.out.println("handleMessage thread id " + Thread.currentThread().getId());
 //                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_LONG).show();
-//                    System.out.println(msg.obj);
+//                    SystemConfig.out.println(msg.obj);
 //                    Map<String, String> cookies = (HashMap<String, String>) msg.obj;
 //                    Log.d("COOKIES", "handleMessage: " + cookies.get("JSESSIONID"));
 //                    // 保存cookies cookies 目前就一个数值emmm 后面取 感觉需要搞个失效时间 emmm 到时候cookie失效了就不好弄了 感觉可以封装一下
@@ -88,26 +94,6 @@ public class LoginActivity extends AppCompatActivity {
                 password.setError("密码不能为空");
                 return;
             }
-//            new LoginThread(usernameText, pwdText, new LoginThread.LoginResultCallBack() {
-//                @Override
-//                public void success(Map<String, String> cookies) {
-//                    Log.d("LOGIN", "success: ");
-//                    Message message = new Message();
-//                    message.obj = cookies;
-//                    message.what = 1;
-//                    uiHandler.sendMessage(message);
-////                    return;
-////                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_LONG).show();
-//                }
-//
-//                @Override
-//                public void fail() {
-//                    Log.d("LOGIN", "fail: ");
-//                    Message message = new Message();
-//                    message.what = 2;
-//                    uiHandler.sendMessage(message);
-//                }
-//            }).start();
 
             LoadingDailog.Builder loadBuilder = new LoadingDailog.Builder(this)
                     .setMessage("登录中...")
@@ -117,111 +103,77 @@ public class LoginActivity extends AppCompatActivity {
             dialog.show();
 
 
-            new LoginTask(LoginActivity.this, usernameText, pwdText, new LoginTask.LoginCall() {
-                @Override
-                public void success(String s) {
-//                    String user = SPUtil.getValue(LoginActivity.this, "username");
-//                    // 说明是第一次emmm
-//                    if (TextUtils.isEmpty(user)) {
-                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_LONG).show();
-                    SPUtil.setValue(LoginActivity.this, "username", usernameText);
-                    SPUtil.setValue(LoginActivity.this, "password", pwdText);
-                    SPUtil.setValue(LoginActivity.this, "JSESSIONID", s);
-                    Log.d("GET TIMETABLE", "onPostExecute: ");
-
-
-                    new UserInfoTask(LoginActivity.this, s, usernameText, new UserInfoTask.GetUserInfoCallback() {
-
+            EasyHttp.get("system")
+                    .baseUrl(Constant.BASE_URL)
+                    .readTimeOut(30 * 1000)
+                    .execute(new CallBack<SystemConfig>() {
                         @Override
-                        public void success() {
-                            Toast.makeText(LoginActivity.this, "获取用户信息成功", Toast.LENGTH_LONG).show();
+                        public void onStart() {
 
-
-                            Toast.makeText(LoginActivity.this, "获取成绩成功", Toast.LENGTH_LONG).show();
-                            ACache cache = ACache.get(LoginActivity.this);
-                            cache.put("good", "nice", 8 * 60 * 60);
-//                                                    cache.put("good", "nice",  60);
-                            SPUtil.setValue(LoginActivity.this, "target_week", "1");
-                            dialog.dismiss();
-
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-
-//                            new ScheduleTask(LoginActivity.this, s, new ScheduleTask.ScheduleTaskFinish() {
-//                                @Override
-//                                public void finish() {
-//                                    Toast.makeText(LoginActivity.this, "获取课表成功", Toast.LENGTH_LONG).show();
-//                                    new ExamTask(LoginActivity.this, s, usernameText, 2018, 1, new ExamTask.ExamTaskFinish() {
-//                                        @Override
-//                                        public void finish() {
-//                                            new GradeTask(LoginActivity.this, s, usernameText, 2018, 1, new GradeTask.GradeTaskFinish() {
-//                                                @Override
-//                                                public void finish() {
-//
-//                                                }
-//
-//                                                @Override
-//                                                public void fail() {
-//                                                    Toast.makeText(LoginActivity.this, "获取成绩失败", Toast.LENGTH_LONG).show();
-//                                                }
-//                                            }).execute("");
-//                                        }
-//
-//                                        @Override
-//                                        public void fail() {
-//
-//                                        }
-//                                    }).execute("");
-//                                }
-//
-//                                @Override
-//                                public void fail() {
-//                                    Toast.makeText(LoginActivity.this, "获取课表失败", Toast.LENGTH_LONG).show();
-//                                }
-//                            }).execute("");
                         }
 
                         @Override
-                        public void error() {
-                            Toast.makeText(LoginActivity.this, "获取用户信息失败", Toast.LENGTH_LONG).show();
+                        public void onCompleted() {
+
                         }
-                    }).execute("");
 
-//                    } else {
-//                        new ExamTask(LoginActivity.this, s, usernameText, 2018, 1, new ExamTask.ExamTaskFinish() {
-//                            @Override
-//                            public void finish() {
-//                                new GradeTask(LoginActivity.this, s, usernameText, 2018, 1, new GradeTask.GradeTaskFinish() {
-//                                    @Override
-//                                    public void finish() {
-//                                        ACache cache = ACache.get(LoginActivity.this);
-//                                        cache.put("good", "nice", 24 * 60 * 60);
-//                                    }
-//
-//                                    @Override
-//                                    public void fail() {
-//
-//                                    }
-//                                }).execute("");
-//                            }
-//
-//                            @Override
-//                            public void fail() {
-//                            }
-//                        }).execute("");
-//                    }
-                }
+                        @Override
+                        public void onError(ApiException e) {
+                            Log.e("LOGIN_ERROR", "onError: " + e.getCode());
+                        }
 
-                @Override
-                public void finish() {
-                }
+                        @Override
+                        public void onSuccess(SystemConfig systemConfig) {
+                            Log.d("EASY_HTTP", "onSuccess: " + systemConfig.getOpen());
 
-                @Override
-                public void fail() {
+                            new LoginTask(LoginActivity.this, usernameText, pwdText, systemConfig.getYear(), systemConfig.getTerm(), new LoginTask.LoginCall() {
+                                @Override
+                                public void success(String s) {
+                                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_LONG).show();
+                                    SPUtil.setValue(LoginActivity.this, "username", usernameText);
+                                    SPUtil.setValue(LoginActivity.this, "password", pwdText);
+                                    SPUtil.setValue(LoginActivity.this, "JSESSIONID", s);
+                                    Log.d("GET TIMETABLE", "onPostExecute: ");
+                                    ACache cache = ACache.get(LoginActivity.this);
+                                    cache.put("good", "nice", 8 * 60 * 60);
+                                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd HH:MM:ss");
+                                    Date date1;
+                                    try {
+                                        date1 = simpleDateFormat.parse(systemConfig.getOpen());
+                                        long curr_week = ((new Date().getTime()) - date1.getTime()) / (7 * 24 * 60 * 60 * 1000);
+                                        long curr_day = ((new Date().getTime()) - date1.getTime()) / (24 * 60 * 60 * 1000) % 7 + 1;
+                                        Log.d("LOGIN SUCCESS", "success: " + date1.getTime() + ", " + curr_week + ", " + curr_day);
+                                        SPUtil.setValue(LoginActivity.this, "target_week", curr_week + "");
 
-                }
-            }).execute("");
+
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+
+
+
+                                    dialog.dismiss();
+
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+
+
+                                }
+
+                                @Override
+                                public void finish() {
+                                }
+
+                                @Override
+                                public void fail() {
+
+                                }
+                            }).execute("");
+
+                        }
+                    });
+
 
             UiUtil.setImmerseLayout(getWindow());
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)

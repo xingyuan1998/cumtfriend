@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.flyingstudio.cumtfriend.MainActivity;
 import com.flyingstudio.cumtfriend.R;
 import com.flyingstudio.cumtfriend.adapter.ExamRecAdapter;
 import com.flyingstudio.cumtfriend.adapter.RecordRecAdapter;
@@ -23,6 +24,7 @@ import com.flyingstudio.cumtfriend.entity.Exam;
 import com.flyingstudio.cumtfriend.entity.ExamData;
 import com.flyingstudio.cumtfriend.entity.Record;
 import com.flyingstudio.cumtfriend.entity.RecordData;
+import com.flyingstudio.cumtfriend.entity.SystemConfig;
 import com.flyingstudio.cumtfriend.net.Constant;
 import com.flyingstudio.cumtfriend.net.ExamTask;
 import com.flyingstudio.cumtfriend.net.GradeTask;
@@ -33,6 +35,7 @@ import com.flyingstudio.cumtfriend.utils.TimeUtil;
 import com.flyingstudio.cumtfriend.view.LoginActivity;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.cache.model.CacheMode;
+import com.zhouyou.http.callback.CallBack;
 import com.zhouyou.http.callback.SimpleCallBack;
 import com.zhouyou.http.exception.ApiException;
 
@@ -120,23 +123,53 @@ public class InfoFragment extends Fragment {
         String stuNum = SPUtil.getValue(getContext(), "username");
         String password = SPUtil.getValue(getContext(), "password");
         if (TextUtils.isEmpty(good)) {
-            new LoginTask(getContext(), stuNum, password, new LoginTask.LoginCall() {
-                @Override
-                public void success(String s) {
-                    ACache cache = ACache.get(getContext());
-                    cache.put("good", "nice", 8 * 60 * 60);
-                }
+            EasyHttp.get("system")
+                    .baseUrl(Constant.BASE_URL)
+                    .readTimeOut(30 * 1000)
+                    .execute(new CallBack<SystemConfig>() {
+                        @Override
+                        public void onStart() {
 
-                @Override
-                public void finish() {
+                        }
 
-                }
+                        @Override
+                        public void onCompleted() {
 
-                @Override
-                public void fail() {
+                        }
 
-                }
-            }).execute();
+                        @Override
+                        public void onError(ApiException e) {
+                            Log.e("LOGIN_ERROR", "onError: " + e.getCode());
+                        }
+
+                        @Override
+                        public void onSuccess(SystemConfig systemConfig) {
+                            Log.d("EASY_HTTP", "onSuccess: " + systemConfig.getOpen());
+
+                            new LoginTask(getContext(), stuNum, password, systemConfig.getYear(), systemConfig.getTerm(), new LoginTask.LoginCall() {
+                                @Override
+                                public void success(String s) {
+
+                                    ACache cache = ACache.get(getContext());
+                                    cache.put("good", "nice", 8 * 60 * 60);
+
+
+                                }
+
+                                @Override
+                                public void finish() {
+                                }
+
+                                @Override
+                                public void fail() {
+
+                                }
+                            }).execute("");
+
+                        }
+                    });
+
+
         }
 
         exams = LitePal.findAll(Exam.class);
